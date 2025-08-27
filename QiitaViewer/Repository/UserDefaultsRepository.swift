@@ -1,0 +1,30 @@
+//
+//  UserDefaultsRepository.swift
+//  QiitaViewer
+//
+//  Created by Tsubasa YABUKI on 2025/08/27.
+//
+
+import Foundation
+
+public protocol UserDefaultsRepositoryProtocol {
+    func loadSearchHistories() -> [SearchHistory]
+}
+
+public final class UserDefaultsRepository: UserDefaultsRepositoryProtocol {
+    public func loadSearchHistories() -> [SearchHistory] {
+        // TODO: UserDefaults から取得する
+        []
+    }
+}
+
+#if DEBUG
+    public final class MockUserDefaultsRepository: UserDefaultsRepositoryProtocol {
+        public func loadSearchHistories() -> [SearchHistory] {
+            [
+                .init(userId: "Qiita"),
+                .init(userId: "rana_kualu"),
+            ]
+        }
+    }
+#endif

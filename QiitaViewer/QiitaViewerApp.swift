@@ -8,10 +8,12 @@
 import SwiftUI
 
 @main
-struct QiitaViewerApp: App {
-    var body: some Scene {
+public struct QiitaViewerApp: App {
+    public init() {}
+
+    public var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
         }
     }
 }

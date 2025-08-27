@@ -18,7 +18,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		6D931C842E5DE1750037BA96 /* QiitaViewer */ = {
+		6D931D822E5F369B0037BA96 /* QiitaViewer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = QiitaViewer;
 			sourceTree = "<group>";
@@ -42,8 +42,8 @@
 			isa = PBXGroup;
 			children = (
 				6D931D072E5F29A60037BA96 /* BuildTools */,
-				6D931C842E5DE1750037BA96 /* QiitaViewer */,
 				6D931D0A2E5F2A340037BA96 /* QiitaViewer.app */,
+				6D931D822E5F369B0037BA96 /* QiitaViewer */,
 			);
 			sourceTree = "<group>";
 		};
@@ -57,14 +57,13 @@
 				6D931C7E2E5DE1750037BA96 /* Sources */,
 				6D931C7F2E5DE1750037BA96 /* Frameworks */,
 				6D931C802E5DE1750037BA96 /* Resources */,
-				6D931D092E5F29FA0037BA96 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				6D931C842E5DE1750037BA96 /* QiitaViewer */,
+				6D931D822E5F369B0037BA96 /* QiitaViewer */,
 			);
 			name = QiitaViewer;
 			packageProductDependencies = (
@@ -123,26 +122,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		6D931D092E5F29FA0037BA96 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd BuildTools\nSDKROOT=(xcrun --sdk macosx --show-sdk-path)\nswift run -c release swiftformat \"$SRCROOT\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6D931C7E2E5DE1750037BA96 /* Sources */ = {
