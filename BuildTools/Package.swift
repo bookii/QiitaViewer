@@ -8,5 +8,5 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/nicklockwood/SwiftFormat", from: "0.55.0"),
     ],
-    targets: [.target(name: "BuildTools", path: "")]
+    targets: [.target(name: "BuildTools", path: "")],
 )
