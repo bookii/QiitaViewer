@@ -22,6 +22,8 @@ public final class UserDefaultsRepository: UserDefaultsRepositoryProtocol {
 
 #if DEBUG
     public final class MockUserDefaultsRepository: UserDefaultsRepositoryProtocol {
+        public init() {}
+
         public func loadSearchHistories() -> [SearchHistory] {
             [
                 .init(userId: "Qiita"),

@@ -33,6 +33,8 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
 
 #if DEBUG
     public final class MockQiitaRepository: QiitaRepositoryProtocol {
+        public init() {}
+
         public func search(userId: String) async throws -> User {
             guard let user = User.mockUsers.first(where: { $0.id == userId }) else {
                 throw QiitaRepositoryError.userNotFound
