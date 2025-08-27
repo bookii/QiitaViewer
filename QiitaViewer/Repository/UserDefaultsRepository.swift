@@ -12,6 +12,8 @@ public protocol UserDefaultsRepositoryProtocol {
 }
 
 public final class UserDefaultsRepository: UserDefaultsRepositoryProtocol {
+    public init() {}
+
     public func loadSearchHistories() -> [SearchHistory] {
         // TODO: UserDefaults から取得する
         []
