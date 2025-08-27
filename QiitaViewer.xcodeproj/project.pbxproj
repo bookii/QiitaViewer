@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6D931CC52E5F1BAA0037BA96 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D931CC42E5F1BAA0037BA96 /* Alamofire */; };
+		6D931CD22E5F1EE50037BA96 /* SwiftFormat in Frameworks */ = {isa = PBXBuildFile; productRef = 6D931CD12E5F1EE50037BA96 /* SwiftFormat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D931CC52E5F1BAA0037BA96 /* Alamofire in Frameworks */,
+				6D931CD22E5F1EE50037BA96 /* SwiftFormat in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +73,7 @@
 			name = QiitaViewer;
 			packageProductDependencies = (
 				6D931CC42E5F1BAA0037BA96 /* Alamofire */,
+				6D931CD12E5F1EE50037BA96 /* SwiftFormat */,
 			);
 			productName = QiitaViewer;
 			productReference = 6D931C822E5DE1750037BA96 /* QiitaViewer.app */;
@@ -102,6 +105,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				6D931CC32E5F1BAA0037BA96 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				6D931CD02E5F1EE50037BA96 /* XCRemoteSwiftPackageReference "SwiftFormat" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6D931C832E5DE1750037BA96 /* Products */;
@@ -343,6 +347,14 @@
 				minimumVersion = 5.10.2;
 			};
 		};
+		6D931CD02E5F1EE50037BA96 /* XCRemoteSwiftPackageReference "SwiftFormat" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nicklockwood/SwiftFormat";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.57.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -350,6 +362,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6D931CC32E5F1BAA0037BA96 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		6D931CD12E5F1EE50037BA96 /* SwiftFormat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6D931CD02E5F1EE50037BA96 /* XCRemoteSwiftPackageReference "SwiftFormat" */;
+			productName = SwiftFormat;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
