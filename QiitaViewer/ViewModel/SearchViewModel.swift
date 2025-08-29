@@ -23,6 +23,6 @@ public class SearchViewModel: ObservableObject {
     }
 
     public func search(userId: String) async throws -> User {
-        try await qiitaRepository.search(userId: userId)
+        try await qiitaRepository.fetchUser(userId: userId)
     }
 }
