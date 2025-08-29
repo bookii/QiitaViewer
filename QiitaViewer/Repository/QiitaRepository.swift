@@ -5,6 +5,7 @@
 //  Created by Tsubasa YABUKI on 2025/08/28.
 //
 
+import Alamofire
 import Foundation
 
 public enum QiitaRepositoryError: LocalizedError {
@@ -23,11 +24,27 @@ public protocol QiitaRepositoryProtocol {
 }
 
 public final class QiitaRepository: QiitaRepositoryProtocol {
-    public init() {}
+    private let accessToken: String
 
-    public func search(userId _: String) async throws -> User {
-        // TODO: Public API から User を取得して返す
-        throw QiitaRepositoryError.userNotFound
+    public init() {
+        guard let accessToken = Bundle.main.object(forInfoDictionaryKey: "ACCESS_TOKEN") as? String else {
+            fatalError()
+        }
+        self.accessToken = accessToken
+    }
+
+    public func search(userId: String) async throws -> User {
+        let response = await AF.request("https://qiita.com/api/v2/users/\(userId)", headers: ["Authorization": "Bearer \(accessToken)"])
+            .validate()
+            .serializingDecodable(User.self)
+            .response
+        
+        switch response.result {
+        case let .success(user):
+            return user
+        case let .failure(error):
+            throw error
+        }
     }
 }
 
