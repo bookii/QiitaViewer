@@ -76,6 +76,7 @@ public struct SearchView: View {
 #if DEBUG
     #Preview {
         @Previewable @State var path = NavigationPath()
+
         NavigationStack(path: $path) {
             SearchView(path: $path, viewModel: .init(userDefaultsRepository: MockUserDefaultsRepository(), qiitaRepository: MockQiitaRepository()))
         }
