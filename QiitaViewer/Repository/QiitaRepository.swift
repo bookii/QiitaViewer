@@ -20,21 +20,23 @@ public enum QiitaRepositoryError: LocalizedError {
 }
 
 public protocol QiitaRepositoryProtocol {
-    func search(userId: String) async throws -> User
+    func fetchUser(userId: String) async throws -> User
+    func fetchItems(userId: String) async throws -> [Item]
 }
 
 public final class QiitaRepository: QiitaRepositoryProtocol {
-    private let accessToken: String
+    private let domain = "https://qiita.com"
+    private let headers: HTTPHeaders
 
     public init() {
         guard let accessToken = Bundle.main.object(forInfoDictionaryKey: "ACCESS_TOKEN") as? String else {
             fatalError()
         }
-        self.accessToken = accessToken
+        headers = ["Authorization": "Bearer \(accessToken)"]
     }
 
-    public func search(userId: String) async throws -> User {
-        let response = await AF.request("https://qiita.com/api/v2/users/\(userId)", headers: ["Authorization": "Bearer \(accessToken)"])
+    public func fetchUser(userId: String) async throws -> User {
+        let response = await AF.request("\(domain)/api/v2/users/\(userId)", headers: headers)
             .validate()
             .serializingDecodable(User.self)
             .response
@@ -46,17 +48,35 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
             throw error
         }
     }
+
+    public func fetchItems(userId: String) async throws -> [Item] {
+        let response = await AF.request("\(domain)/api/v2/users/\(userId)/items", headers: headers)
+            .validate()
+            .serializingDecodable([Item].self)
+            .response
+
+        switch response.result {
+        case let .success(items):
+            return items
+        case let .failure(error):
+            throw error
+        }
+    }
 }
 
 #if DEBUG
     public final class MockQiitaRepository: QiitaRepositoryProtocol {
         public init() {}
 
-        public func search(userId: String) async throws -> User {
+        public func fetchUser(userId: String) async throws -> User {
             guard let user = User.mockUsers.first(where: { $0.id == userId }) else {
                 throw QiitaRepositoryError.userNotFound
             }
             return user
+        }
+
+        public func fetchItems(userId _: String) async throws -> [Item] {
+            Item.mockItems
         }
     }
 #endif
