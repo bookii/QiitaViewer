@@ -38,7 +38,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
             .validate()
             .serializingDecodable(User.self)
             .response
-        
+
         switch response.result {
         case let .success(user):
             return user
