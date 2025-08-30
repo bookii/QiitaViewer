@@ -11,11 +11,11 @@ public struct SearchView: View {
     @Environment(\.userDefaultsRepository) private var userDefaultsRepository
     @Environment(\.qiitaRepository) private var qiitaRepository
     @Binding private var path: NavigationPath
-    
+
     public init(path: Binding<NavigationPath>) {
         _path = path
     }
-    
+
     public var body: some View {
         SearchContentView(path: $path, viewModel: .init(userDefaultsRepository: userDefaultsRepository, qiitaRepository: qiitaRepository))
     }
@@ -25,7 +25,6 @@ private struct SearchContentView: View {
     private enum Destination: Hashable {
         case result(User)
     }
-
 
     @StateObject private var viewModel: SearchViewModel
     @Binding private var path: NavigationPath

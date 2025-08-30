@@ -18,6 +18,7 @@ public class SearchViewModel: ObservableObject {
         self.qiitaRepository = qiitaRepository
     }
 
+    @MainActor
     public func loadSearchHistories() {
         searchHistories = userDefaultsRepository.loadSearchHistories()
     }

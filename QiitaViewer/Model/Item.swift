@@ -20,19 +20,19 @@ public struct Item: Decodable {
         case likesCount = "likes_count"
         case createdAt = "created_at"
     }
-    
+
     public init(id: String, title: String, likesCount: Int, createdAt: Date) {
         self.id = id
         self.title = title
         self.likesCount = likesCount
         self.createdAt = createdAt
     }
-    
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.id = try container.decode(String.self, forKey: .id)
-        self.title = try container.decode(String.self, forKey: .title)
-        self.likesCount = try container.decode(Int.self, forKey: .likesCount)
+        id = try container.decode(String.self, forKey: .id)
+        title = try container.decode(String.self, forKey: .title)
+        likesCount = try container.decode(Int.self, forKey: .likesCount)
         let createdAtString = try container.decode(String.self, forKey: .createdAt)
         createdAt = ISO8601DateFormatter().date(from: createdAtString)
     }

@@ -11,12 +11,12 @@ public struct ProfileView: View {
     @Environment(\.qiitaRepository) private var qiitaRepository
     @Binding private var path: NavigationPath
     private let user: User
-    
+
     public init(path: Binding<NavigationPath>, user: User) {
         _path = path
         self.user = user
     }
-    
+
     public var body: some View {
         ProfileContentView(path: $path, user: user, viewModel: ProfileViewModel(userId: user.id, qiitaRepository: qiitaRepository))
     }
@@ -109,7 +109,7 @@ private struct ProfileContentView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .padding(.horizontal, 16)
     }
-    
+
     private var initialLoadingView: some View {
         ProgressView()
             .padding(.vertical, 24)
