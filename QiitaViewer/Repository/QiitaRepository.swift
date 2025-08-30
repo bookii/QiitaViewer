@@ -34,8 +34,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
     private let headers: HTTPHeaders
 
     public init() {
-        guard let accessToken = Bundle.main.object(forInfoDictionaryKey: "ACCESS_TOKEN") as? String else {
-            fatalError()
+            fatalError("ACCESS_TOKEN not found in Info.plist")
         }
         headers = ["Authorization": "Bearer \(accessToken)"]
     }
