@@ -41,7 +41,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
     }
 
     public func fetchUser(userId: String) async throws -> User {
-        let response = await AF.request("\(domain)/api/v2/users/\(userId)", headers: headers)
+        let response = await AF.request("\(domain)/api/v2/users/\(userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) ?? userId)", headers: headers)
             .validate()
             .serializingDecodable(User.self)
             .response
@@ -55,7 +55,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
     }
 
     public func fetchItems(userId: String) async throws -> [Item] {
-        let response = await AF.request("\(domain)/api/v2/users/\(userId)/items", headers: headers)
+        let response = await AF.request("\(domain)/api/v2/users/\(userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) ?? userId)/items", headers: headers)
             .validate()
             .serializingDecodable([Item].self)
             .response
