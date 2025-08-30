@@ -11,6 +11,7 @@ import Foundation
 public struct Item: Decodable {
     public let id: String
     public let title: String
+    public let url: URL
     public let tags: [Tag]
     public let likesCount: Int
     public let createdAt: Date?
@@ -18,14 +19,16 @@ public struct Item: Decodable {
     public enum CodingKeys: String, CodingKey {
         case id
         case title
+        case url
         case tags
         case likesCount = "likes_count"
         case createdAt = "created_at"
     }
 
-    public init(id: String, title: String, tags: [Tag], likesCount: Int, createdAt: Date) {
+    public init(id: String, title: String, url: URL, tags: [Tag], likesCount: Int, createdAt: Date) {
         self.id = id
         self.title = title
+        self.url = url
         self.tags = tags
         self.likesCount = likesCount
         self.createdAt = createdAt
@@ -35,6 +38,7 @@ public struct Item: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         title = try container.decode(String.self, forKey: .title)
+        url = try container.decode(URL.self, forKey: .url)
         tags = try container.decode([Tag].self, forKey: .tags)
         likesCount = try container.decode(Int.self, forKey: .likesCount)
         let createdAtString = try container.decode(String.self, forKey: .createdAt)
@@ -46,12 +50,18 @@ public struct Item: Decodable {
     public extension Item {
         static var mockItems: [Self] {
             [
-                .init(id: "abc123", title: "Markdown入門",
+                .init(id: "abc123",
+                      title: "Markdown入門",
+                      url: URL(string: "https://qiita.com/Qiita/items/b9fcf26e0fc8f46fed6a")!,
                       tags: [.init(name: "Markdown")],
-                      likesCount: 0, createdAt: Date(timeIntervalSince1970: 1_711_940_400)),
-                .init(id: "def456", title: "Swift6対応は難しいですが、皆さんいかがお過ごしですか？",
+                      likesCount: 0,
+                      createdAt: Date(timeIntervalSince1970: 1_711_940_400)),
+                .init(id: "def456",
+                      title: "Swift6対応は難しいですが、皆さんいかがお過ごしですか？",
+                      url: URL(string: "https://qiita.com/alt_yamamoto/items/25eda376e6b947208996")!,
                       tags: [.init(name: "Swift"), .init(name: "ポエム"), .init(name: "ながーーーーーーーーーーーーーーーーーーーーーーーーーーーーいタグ")],
-                      likesCount: 999, createdAt: Date(timeIntervalSince1970: 1_735_657_200)),
+                      likesCount: 999,
+                      createdAt: Date(timeIntervalSince1970: 1_735_657_200)),
             ]
         }
     }
