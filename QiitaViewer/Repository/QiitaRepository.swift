@@ -7,6 +7,11 @@
 
 import Alamofire
 import Foundation
+import SwiftUICore
+
+extension EnvironmentValues {
+    @Entry var qiitaRepository: QiitaRepositoryProtocol = QiitaRepository()
+}
 
 public enum QiitaRepositoryError: LocalizedError {
     case userNotFound
@@ -21,7 +26,7 @@ public enum QiitaRepositoryError: LocalizedError {
 
 public protocol QiitaRepositoryProtocol {
     func fetchUser(userId: String) async throws -> User
-    func fetchItems(userId: String) async throws -> [Item]
+    func fetchItems(userId: String, page: Int) async throws -> [Item]
 }
 
 public final class QiitaRepository: QiitaRepositoryProtocol {
@@ -49,7 +54,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
         }
     }
 
-    public func fetchItems(userId: String) async throws -> [Item] {
+    public func fetchItems(userId: String, page: Int) async throws -> [Item] {
         let response = await AF.request("\(domain)/api/v2/users/\(userId)/items", headers: headers)
             .validate()
             .serializingDecodable([Item].self)
@@ -72,11 +77,13 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
             guard let user = User.mockUsers.first(where: { $0.id == userId }) else {
                 throw QiitaRepositoryError.userNotFound
             }
+            try? await Task.sleep(for: .seconds(1))
             return user
         }
 
-        public func fetchItems(userId _: String) async throws -> [Item] {
-            Item.mockItems
+        public func fetchItems(userId _: String, page _: Int) async throws -> [Item] {
+            try? await Task.sleep(for: .seconds(1))
+            return Item.mockItems
         }
     }
 #endif

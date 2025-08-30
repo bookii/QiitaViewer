@@ -10,10 +10,10 @@ import Foundation
 public class SearchViewModel: ObservableObject {
     @Published public private(set) var searchHistories: [SearchHistory] = []
 
-    private let userDefaultsRepository: UserDefaultsRepositoryProtocol
-    private let qiitaRepository: QiitaRepositoryProtocol
+    private var userDefaultsRepository: UserDefaultsRepositoryProtocol
+    private var qiitaRepository: QiitaRepositoryProtocol
 
-    public init(userDefaultsRepository: UserDefaultsRepositoryProtocol = UserDefaultsRepository(), qiitaRepository: QiitaRepositoryProtocol = QiitaRepository()) {
+    public init(userDefaultsRepository: UserDefaultsRepositoryProtocol, qiitaRepository: QiitaRepositoryProtocol) {
         self.userDefaultsRepository = userDefaultsRepository
         self.qiitaRepository = qiitaRepository
     }
@@ -23,6 +23,6 @@ public class SearchViewModel: ObservableObject {
     }
 
     public func search(userId: String) async throws -> User {
-        try await qiitaRepository.fetchUser(userId: userId)
+        return try await qiitaRepository.fetchUser(userId: userId)
     }
 }
