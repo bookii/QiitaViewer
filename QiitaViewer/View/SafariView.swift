@@ -39,6 +39,7 @@ private struct SafariContentView: UIViewControllerRepresentable {
     fileprivate func makeUIViewController(context: Context) -> UINavigationController {
         let safariViewController = SFSafariViewController(url: url)
         safariViewController.delegate = context.coordinator
+        safariViewController.dismissButtonStyle = .close
         safariViewController.preferredBarTintColor = .systemBackground
 
         // NOTE: 完了ボタンの一部領域が反応しなくなる問題を解消するために navigationController に埋め込む
