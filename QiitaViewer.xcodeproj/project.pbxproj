@@ -10,13 +10,11 @@
 		6D931CC52E5F1BAA0037BA96 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6D931CC42E5F1BAA0037BA96 /* Alamofire */; };
 		6D931CD22E5F1EE50037BA96 /* SwiftFormat in Frameworks */ = {isa = PBXBuildFile; productRef = 6D931CD12E5F1EE50037BA96 /* SwiftFormat */; };
 		6D931D082E5F29A60037BA96 /* BuildTools in Resources */ = {isa = PBXBuildFile; fileRef = 6D931D072E5F29A60037BA96 /* BuildTools */; };
-		6D931DC12E61C4140037BA96 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 6D931DC02E61C4140037BA96 /* Config.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		6D931D072E5F29A60037BA96 /* BuildTools */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = BuildTools; sourceTree = "<group>"; };
 		6D931D0A2E5F2A340037BA96 /* QiitaViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QiitaViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		6D931DC02E61C4140037BA96 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -56,7 +54,6 @@
 		6D931C792E5DE1750037BA96 = {
 			isa = PBXGroup;
 			children = (
-				6D931DC02E61C4140037BA96 /* Config.xcconfig */,
 				6D931D072E5F29A60037BA96 /* BuildTools */,
 				6D931D0A2E5F2A340037BA96 /* QiitaViewer.app */,
 				6D931D822E5F369B0037BA96 /* QiitaViewer */,
@@ -133,7 +130,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6D931DC12E61C4140037BA96 /* Config.xcconfig in Resources */,
 				6D931D082E5F29A60037BA96 /* BuildTools in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -274,7 +270,6 @@
 		};
 		6D931C8E2E5DE1760037BA96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6D931DC02E61C4140037BA96 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -304,7 +299,6 @@
 		};
 		6D931C8F2E5DE1760037BA96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6D931DC02E61C4140037BA96 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
