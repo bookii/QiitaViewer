@@ -11,14 +11,14 @@ public class ProfileViewModel: ObservableObject {
     @Published public private(set) var items: [Item] = []
 
     private let userId: String
-    private let qiitaRepository: QiitaRepositoryProtocol
+    private var qiitaRepository: QiitaRepositoryProtocol
 
-    public init(userId: String, qiitaRepository: QiitaRepositoryProtocol = QiitaRepository()) {
+    public init(userId: String, qiitaRepository: QiitaRepositoryProtocol) {
         self.userId = userId
         self.qiitaRepository = qiitaRepository
     }
 
     public func loadItems() async throws {
-        items = try await qiitaRepository.fetchItems(userId: userId)
+        items = try await qiitaRepository.fetchItems(userId: userId, page: 1)
     }
 }

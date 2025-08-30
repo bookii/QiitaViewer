@@ -12,13 +12,29 @@ public struct Item: Decodable {
     public let id: String
     public let title: String
     public let likesCount: Int
-    public let createdAt: Date
+    public let createdAt: Date?
 
     public enum CodingKeys: String, CodingKey {
         case id
         case title
         case likesCount = "likes_count"
         case createdAt = "created_at"
+    }
+    
+    public init(id: String, title: String, likesCount: Int, createdAt: Date) {
+        self.id = id
+        self.title = title
+        self.likesCount = likesCount
+        self.createdAt = createdAt
+    }
+    
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.title = try container.decode(String.self, forKey: .title)
+        self.likesCount = try container.decode(Int.self, forKey: .likesCount)
+        let createdAtString = try container.decode(String.self, forKey: .createdAt)
+        createdAt = ISO8601DateFormatter().date(from: createdAtString)
     }
 }
 

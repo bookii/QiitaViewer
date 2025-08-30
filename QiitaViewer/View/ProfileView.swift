@@ -8,11 +8,27 @@
 import SwiftUI
 
 public struct ProfileView: View {
+    @Environment(\.qiitaRepository) private var qiitaRepository
     @Binding private var path: NavigationPath
     private let user: User
+    
+    public init(path: Binding<NavigationPath>, user: User) {
+        _path = path
+        self.user = user
+    }
+    
+    public var body: some View {
+        ProfileContentView(path: $path, user: user, viewModel: ProfileViewModel(userId: user.id, qiitaRepository: qiitaRepository))
+    }
+}
+
+private struct ProfileContentView: View {
     @StateObject private var viewModel: ProfileViewModel
+    @Binding private var path: NavigationPath
+    private let user: User
     @State private var isAlertPresented: Bool = false
     @State private var alertMessage: String?
+    @State private var isInitialLoading: Bool = true
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ja_JP")
@@ -21,27 +37,34 @@ public struct ProfileView: View {
         return formatter
     }()
 
-    public init(path: Binding<NavigationPath>, user: User, viewModel: ProfileViewModel) {
+    fileprivate init(path: Binding<NavigationPath>, user: User, viewModel: ProfileViewModel) {
         _path = path
         self.user = user
         _viewModel = .init(wrappedValue: viewModel)
     }
 
-    public var body: some View {
+    fileprivate var body: some View {
         ScrollView {
             VStack(spacing: 0) {
                 headerView
-                itemsView
+                if isInitialLoading {
+                    initialLoadingView
+                } else {
+                    itemsView
+                }
             }
         }
         .frame(maxHeight: .infinity)
         .background(Color(uiColor: .systemGroupedBackground))
+        .navigationTitle("プロフィール")
+        .navigationBarTitleDisplayMode(.inline)
         .alert("Error", isPresented: $isAlertPresented) {} message: {
             Text(alertMessage ?? "")
         }
         .onAppear {
             Task {
                 await loadItems()
+                isInitialLoading = false
             }
         }
         .refreshable {
@@ -50,7 +73,7 @@ public struct ProfileView: View {
     }
 
     private var headerView: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 12) {
                 AsyncImage(url: user.profileImageUrl) { imagePhase in
                     imagePhase.image?.resizable()
@@ -83,27 +106,42 @@ public struct ProfileView: View {
         }
         .padding(16)
         .background(Color(uiColor: .secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.horizontal, 16)
+    }
+    
+    private var initialLoadingView: some View {
+        ProgressView()
+            .padding(.vertical, 24)
     }
 
     private var itemsView: some View {
-        LazyVStack(spacing: 0) {
-            Section {
-                ForEach(viewModel.items, id: \.id) { item in
-                    VStack(spacing: 0) {
-                        Divider()
-                        itemView(item: item)
+        VStack(alignment: .leading, spacing: 0) {
+            Text("投稿一覧")
+                .font(.headline)
+                .padding(8)
+            LazyVStack(spacing: 0) {
+                Section {
+                    ForEach(viewModel.items.indices, id: \.self) { index in
+                        if index > 0 {
+                            Divider()
+                        }
+                        VStack(spacing: 0) {
+                            itemView(item: viewModel.items[index])
+                        }
                     }
                 }
             }
+            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
-        .frame(maxHeight: .infinity)
-        .listRowInsets(.none)
+        .padding(16)
     }
 
     private func itemView(item: Item) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 0) {
                 Text(item.title)
+                    .font(.headline)
                 Spacer(minLength: 0)
             }
             HStack(spacing: 0) {
@@ -114,9 +152,11 @@ public struct ProfileView: View {
                         .font(.subheadline)
                 }
                 Spacer(minLength: 8)
-                Text(dateFormatter.string(from: item.createdAt))
-                    .font(.subheadline)
-                    .foregroundStyle(Color(uiColor: .secondaryLabel))
+                if let createdAt = item.createdAt {
+                    Text(dateFormatter.string(from: createdAt))
+                        .font(.footnote)
+                        .foregroundStyle(Color(uiColor: .secondaryLabel))
+                }
             }
         }
         .padding(16)
@@ -138,7 +178,8 @@ public struct ProfileView: View {
         @Previewable @State var path = NavigationPath()
 
         NavigationStack(path: $path) {
-            ProfileView(path: $path, user: User.mockUsers[0], viewModel: .init(userId: "Qiita", qiitaRepository: MockQiitaRepository()))
+            ProfileView(path: $path, user: User.mockUsers[0])
         }
+        .environment(\.qiitaRepository, MockQiitaRepository())
     }
 #endif
