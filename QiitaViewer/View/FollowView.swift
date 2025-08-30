@@ -118,6 +118,7 @@ private struct FollowContentView: View {
                 .frame(maxWidth: .infinity)
             }
         }
+        .padding(.horizontal, 16)
         .background {
             Color(uiColor: .systemBackground)
         }
