@@ -10,8 +10,8 @@ import Foundation
 public class SearchViewModel: ObservableObject {
     @Published public private(set) var searchHistories: [SearchHistory] = []
 
-    private var userDefaultsRepository: UserDefaultsRepositoryProtocol
-    private var qiitaRepository: QiitaRepositoryProtocol
+    private let userDefaultsRepository: UserDefaultsRepositoryProtocol
+    private let qiitaRepository: QiitaRepositoryProtocol
 
     public init(userDefaultsRepository: UserDefaultsRepositoryProtocol, qiitaRepository: QiitaRepositoryProtocol) {
         self.userDefaultsRepository = userDefaultsRepository

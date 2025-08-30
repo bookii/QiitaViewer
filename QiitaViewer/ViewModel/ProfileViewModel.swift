@@ -11,7 +11,7 @@ public class ProfileViewModel: ObservableObject {
     @Published public private(set) var items: [Item] = []
 
     private let userId: String
-    private var qiitaRepository: QiitaRepositoryProtocol
+    private let qiitaRepository: QiitaRepositoryProtocol
 
     public init(userId: String, qiitaRepository: QiitaRepositoryProtocol) {
         self.userId = userId
