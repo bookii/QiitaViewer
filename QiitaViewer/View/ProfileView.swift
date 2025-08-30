@@ -32,6 +32,8 @@ private struct ProfileContentView: View {
     private let user: User
     @State private var isAlertPresented: Bool = false
     @State private var alertMessage: String?
+    @State private var isSheetPresented: Bool = false
+    @State private var selectedFollowType: FollowView.FollowType?
     @State private var isInitialLoading: Bool = true
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -84,6 +86,11 @@ private struct ProfileContentView: View {
                 SafariView(url: url)
             }
         }
+        .sheet(item: $selectedFollowType) { selectedFollowType in
+            NavigationStack(path: $path) {
+                FollowView(path: $path, userId: user.id, followType: selectedFollowType)
+            }
+        }
     }
 
     private var headerView: some View {
@@ -107,19 +114,31 @@ private struct ProfileContentView: View {
                     .multilineTextAlignment(.leading)
             }
             HStack(spacing: 16) {
-                HStack(spacing: 6) {
-                    Text(String(user.followeesCount))
-                        .font(.headline)
-                    Text("フォロー")
-                        .font(.subheadline)
-                        .foregroundStyle(Color(uiColor: .secondaryLabel))
+                Button {
+                    selectedFollowType = .followee
+                    isSheetPresented = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Text(String(user.followeesCount))
+                            .font(.headline)
+                            .foregroundStyle(Color(uiColor: .label))
+                        Text("フォロー")
+                            .font(.subheadline)
+                            .foregroundStyle(Color(uiColor: .secondaryLabel))
+                    }
                 }
-                HStack(spacing: 6) {
-                    Text(String(user.followersCount))
-                        .font(.headline)
-                    Text("フォロワー")
-                        .font(.subheadline)
-                        .foregroundStyle(Color(uiColor: .secondaryLabel))
+                Button {
+                    selectedFollowType = .follower
+                    isSheetPresented = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Text(String(user.followersCount))
+                            .font(.headline)
+                            .foregroundStyle(Color(uiColor: .label))
+                        Text("フォロワー")
+                            .font(.subheadline)
+                            .foregroundStyle(Color(uiColor: .secondaryLabel))
+                    }
                 }
             }
         }
