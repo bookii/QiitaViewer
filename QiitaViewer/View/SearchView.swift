@@ -89,7 +89,11 @@ private struct SearchContentView: View {
         .onSubmit(of: .search) {
             search(userId: searchText)
         }
-        .alert("Error", isPresented: $isAlertPresented) {} message: {
+        .alert("Error", isPresented: $isAlertPresented) {
+            Button("OK") {
+                alertMessage = nil
+            }
+        } message: {
             Text(alertMessage ?? "")
         }
         .onAppear {
