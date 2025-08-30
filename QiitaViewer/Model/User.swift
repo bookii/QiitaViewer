@@ -33,6 +33,11 @@ public struct User: Decodable, Hashable {
                       followeesCount: 2,
                       followersCount: 582_883,
                       description: "Qiita公式アカウントです。Qiitaに関するお問い合わせに反応したり、お知らせなどを発信しています。"),
+                .init(id: "QiitaBootleg",
+                      profileImageUrl: URL(string: "https://s3-ap-northeast-1.amazonaws.com/qiita-image-store/0/88/ccf90b557a406157dbb9d2d7e543dae384dbb561/large.png?1575443439")!,
+                      followeesCount: 1_000,
+                      followersCount: 0,
+                      description: "Qiita非公式アカウントです。Qiitaに関するお問い合わせに反応したり、お知らせなどを発信していません。"),
             ]
         }
     }
