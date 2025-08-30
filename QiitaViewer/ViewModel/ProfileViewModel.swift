@@ -18,7 +18,8 @@ public class ProfileViewModel: ObservableObject {
         self.qiitaRepository = qiitaRepository
     }
 
+    @MainActor
     public func loadItems() async throws {
-        items = try await qiitaRepository.fetchItems(userId: userId, page: 1)
+        items = try await qiitaRepository.fetchItems(userId: userId)
     }
 }
