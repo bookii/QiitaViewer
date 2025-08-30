@@ -8,41 +8,85 @@
 import SwiftUI
 
 public struct SearchView: View {
+    @Environment(\.userDefaultsRepository) private var userDefaultsRepository
+    @Environment(\.qiitaRepository) private var qiitaRepository
+    @Binding private var path: NavigationPath
+
+    public init(path: Binding<NavigationPath>) {
+        _path = path
+    }
+
+    public var body: some View {
+        SearchContentView(path: $path, viewModel: .init(userDefaultsRepository: userDefaultsRepository, qiitaRepository: qiitaRepository))
+    }
+}
+
+private struct SearchContentView: View {
     private enum Destination: Hashable {
         case result(User)
     }
 
-    @Binding private var path: NavigationPath
     @StateObject private var viewModel: SearchViewModel
+    @Binding private var path: NavigationPath
     @State private var searchText = ""
     @State private var isAlertPresented: Bool = false
     @State private var alertMessage: String?
+    @State private var isLoading: Bool = false
 
-    public init(path: Binding<NavigationPath>, viewModel: SearchViewModel) {
+    fileprivate init(path: Binding<NavigationPath>, viewModel: SearchViewModel) {
         _path = path
         _viewModel = .init(wrappedValue: viewModel)
     }
 
-    public var body: some View {
-        List {
-            if !searchText.isEmpty {
-                Section {
-                    Button("\(searchText) で検索") {
+    fileprivate var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                if !searchText.isEmpty {
+                    Button {
                         search(userId: searchText)
+                    } label: {
+                        HStack(spacing: 0) {
+                            Text("\(searchText) で検索")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(16)
+                        }
+                    }
+                    .background(Color(uiColor: .secondarySystemGroupedBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(.vertical, 8)
+                }
+                Text("検索履歴")
+                    .font(.headline)
+                    .padding(8)
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(viewModel.searchHistories.indices, id: \.self) { index in
+                        let searchHistory = viewModel.searchHistories[index]
+                        if index > 0 {
+                            Divider()
+                        }
+                        Button {
+                            search(userId: searchHistory.userId)
+                        } label: {
+                            Text(searchHistory.userId)
+                                .foregroundStyle(Color(uiColor: .label))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(16)
+                        }
+                        .background(Color(uiColor: .secondarySystemGroupedBackground))
                     }
                 }
+                .clipShape(RoundedRectangle(cornerRadius: 12))
             }
-            Section("検索履歴") {
-                ForEach(viewModel.searchHistories, id: \.userId) { searchHistory in
-                    Button(searchHistory.userId) {
-                        search(userId: searchHistory.userId)
-                    }
-                    .foregroundStyle(.primary)
-                }
+            .padding(.horizontal, 16)
+        }
+        .background(Color(uiColor: .systemGroupedBackground))
+        .searchable(text: $searchText, prompt: "ユーザーIDを入力")
+        .overlay {
+            if isLoading {
+                ProgressView()
             }
         }
-        .searchable(text: $searchText, prompt: "ユーザーIDを入力")
-        .onSubmit {
+        .onSubmit(of: .search) {
             search(userId: searchText)
         }
         .alert("Error", isPresented: $isAlertPresented) {} message: {
@@ -54,13 +98,16 @@ public struct SearchView: View {
         .navigationDestination(for: Destination.self) { destination in
             switch destination {
             case let .result(user):
-                // TODO: プロフィール画面の実装
-                Text(user.id)
+                ProfileView(path: $path, user: user)
             }
         }
     }
 
     private func search(userId: String) {
+        guard !isLoading else {
+            return
+        }
+        isLoading = true
         Task {
             do {
                 let user = try await viewModel.search(userId: userId)
@@ -69,6 +116,7 @@ public struct SearchView: View {
                 alertMessage = error.localizedDescription
                 isAlertPresented = true
             }
+            isLoading = false
         }
     }
 }
@@ -76,8 +124,11 @@ public struct SearchView: View {
 #if DEBUG
     #Preview {
         @Previewable @State var path = NavigationPath()
+
         NavigationStack(path: $path) {
-            SearchView(path: $path, viewModel: .init(userDefaultsRepository: MockUserDefaultsRepository(), qiitaRepository: MockQiitaRepository()))
+            SearchView(path: $path)
         }
+        .environment(\.userDefaultsRepository, MockUserDefaultsRepository())
+        .environment(\.qiitaRepository, MockQiitaRepository())
     }
 #endif

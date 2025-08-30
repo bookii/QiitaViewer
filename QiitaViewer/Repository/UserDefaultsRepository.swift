@@ -6,6 +6,11 @@
 //
 
 import Foundation
+import SwiftUICore
+
+extension EnvironmentValues {
+    @Entry var userDefaultsRepository: UserDefaultsRepositoryProtocol = UserDefaultsRepository()
+}
 
 public protocol UserDefaultsRepositoryProtocol {
     func loadSearchHistories() -> [SearchHistory]
