@@ -110,7 +110,7 @@ private struct FollowContentView: View {
                             .font(.headline)
                             .foregroundStyle(Color(uiColor: followType == selectedFollowType ? .qiitaPrimary : .secondaryLabel))
                             .padding(.vertical, 8)
-                        Rectangle()
+                        Capsule()
                             .frame(height: 2)
                             .foregroundStyle(Color(uiColor: followType == selectedFollowType ? .qiitaPrimary : .clear))
                     }
