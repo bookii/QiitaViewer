@@ -13,16 +13,17 @@ public class SearchViewModel: ObservableObject {
     private let userDefaultsRepository: UserDefaultsRepositoryProtocol
     private let qiitaRepository: QiitaRepositoryProtocol
 
-    public init(userDefaultsRepository: UserDefaultsRepositoryProtocol = UserDefaultsRepository(), qiitaRepository: QiitaRepositoryProtocol = QiitaRepository()) {
+    public init(userDefaultsRepository: UserDefaultsRepositoryProtocol, qiitaRepository: QiitaRepositoryProtocol) {
         self.userDefaultsRepository = userDefaultsRepository
         self.qiitaRepository = qiitaRepository
     }
 
+    @MainActor
     public func loadSearchHistories() {
         searchHistories = userDefaultsRepository.loadSearchHistories()
     }
 
     public func search(userId: String) async throws -> User {
-        try await qiitaRepository.search(userId: userId)
+        return try await qiitaRepository.fetchUser(userId: userId)
     }
 }
