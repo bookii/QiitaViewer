@@ -18,18 +18,16 @@ public struct FollowView: View {
     }
 
     @Environment(\.qiitaRepository) private var qiitaRepository
-    @Binding private var path: NavigationPath
     private let userId: String
     private let followType: FollowType
 
-    public init(path: Binding<NavigationPath>, userId: String, followType: FollowType) {
-        _path = path
+    public init(userId: String, followType: FollowType) {
         self.userId = userId
         self.followType = followType
     }
 
     public var body: some View {
-        FollowContentView(path: $path, userId: userId, followType: followType, viewModel: .init(userId: userId, qiitaRepository: qiitaRepository))
+        FollowContentView(userId: userId, followType: followType, viewModel: .init(userId: userId, qiitaRepository: qiitaRepository))
     }
 }
 
@@ -41,53 +39,55 @@ private struct FollowContentView: View {
     }
 
     @StateObject private var viewModel: FollowViewModel
-    @Binding private var path: NavigationPath
+    @State private var path = NavigationPath()
     private let userId: String
     @State private var selectedFollowType: FollowType
     @State private var isAlertPresented: Bool = false
     @State private var alertMessage: String?
 
-    fileprivate init(path: Binding<NavigationPath>, userId: String, followType: FollowType, viewModel: FollowViewModel) {
-        _path = path
+    fileprivate init(userId: String, followType: FollowType, viewModel: FollowViewModel) {
         self.userId = userId
         selectedFollowType = followType
         _viewModel = .init(wrappedValue: viewModel)
     }
 
     fileprivate var body: some View {
-        VStack(spacing: 0) {
-            tabView
-            pageView
-        }
-        .background {
-            Color(uiColor: .systemGroupedBackground)
-        }
-        .navigationTitle("@\(userId)")
-        .navigationBarTitleDisplayMode(.inline)
-        .alert("Error", isPresented: $isAlertPresented) {
-            Button("OK") {
-                alertMessage = nil
+        NavigationStack(path: $path) {
+            VStack(spacing: 0) {
+                tabView
+                pageView
             }
-        } message: {
-            Text(alertMessage ?? "")
-        }
-        .animation(.default, value: selectedFollowType)
-        .onChange(of: selectedFollowType, initial: true) { _, newValue in
-            Task {
-                do {
-                    switch newValue {
-                    case .followee:
-                        if viewModel.followees == nil {
-                            try await viewModel.loadFollowees()
+            .background {
+                Color(uiColor: .systemGroupedBackground)
+                    .ignoresSafeArea(edges: .bottom)
+            }
+            .navigationTitle("@\(userId)")
+            .navigationBarTitleDisplayMode(.inline)
+            .alert("Error", isPresented: $isAlertPresented) {
+                Button("OK") {
+                    alertMessage = nil
+                }
+            } message: {
+                Text(alertMessage ?? "")
+            }
+            .animation(.default, value: selectedFollowType)
+            .onChange(of: selectedFollowType, initial: true) { _, newValue in
+                Task {
+                    do {
+                        switch newValue {
+                        case .followee:
+                            if viewModel.followees == nil {
+                                try await viewModel.loadFollowees()
+                            }
+                        case .follower:
+                            if viewModel.followers == nil {
+                                try await viewModel.loadFollowers()
+                            }
                         }
-                    case .follower:
-                        if viewModel.followers == nil {
-                            try await viewModel.loadFollowers()
-                        }
+                    } catch {
+                        alertMessage = error.localizedDescription
+                        isAlertPresented = true
                     }
-                } catch {
-                    alertMessage = error.localizedDescription
-                    isAlertPresented = true
                 }
             }
         }
@@ -112,7 +112,9 @@ private struct FollowContentView: View {
                 .frame(maxWidth: .infinity)
             }
         }
-        .background(Color(uiColor: .systemBackground))
+        .background {
+            Color(uiColor: .systemBackground)
+        }
     }
 
     private var pageView: some View {
@@ -208,11 +210,7 @@ private extension FollowView.FollowType {
 
 #if DEBUG
     #Preview {
-        @Previewable @State var path = NavigationPath()
-
-        NavigationStack(path: $path) {
-            FollowView(path: $path, userId: User.mockUsers[0].id, followType: .followee)
-        }
-        .environment(\.qiitaRepository, MockQiitaRepository())
+        FollowView(userId: User.mockUsers[0].id, followType: .followee)
+            .environment(\.qiitaRepository, MockQiitaRepository())
     }
 #endif

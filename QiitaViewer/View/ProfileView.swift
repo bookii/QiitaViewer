@@ -87,9 +87,7 @@ private struct ProfileContentView: View {
             }
         }
         .sheet(item: $selectedFollowType) { selectedFollowType in
-            NavigationStack(path: $path) {
-                FollowView(path: $path, userId: user.id, followType: selectedFollowType)
-            }
+            FollowView(userId: user.id, followType: selectedFollowType)
         }
     }
 
