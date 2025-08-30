@@ -80,6 +80,8 @@ private struct SearchContentView: View {
             .padding(.horizontal, 16)
         }
         .background(Color(uiColor: .systemGroupedBackground))
+        .navigationTitle("ユーザー検索")
+        .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $searchText, prompt: "ユーザーIDを入力")
         .overlay {
             if isLoading {
