@@ -110,7 +110,7 @@ private struct FollowContentView: View {
                             .font(.headline)
                             .foregroundStyle(Color(uiColor: followType == selectedFollowType ? .qiitaPrimary : .secondaryLabel))
                             .padding(.vertical, 8)
-                        Rectangle()
+                        Capsule()
                             .frame(height: 2)
                             .foregroundStyle(Color(uiColor: followType == selectedFollowType ? .qiitaPrimary : .clear))
                     }
@@ -118,6 +118,7 @@ private struct FollowContentView: View {
                 .frame(maxWidth: .infinity)
             }
         }
+        .padding(.horizontal, 16)
         .background {
             Color(uiColor: .systemBackground)
         }
@@ -144,6 +145,7 @@ private struct FollowContentView: View {
             }
             .tag(FollowType.follower)
         }
+        .ignoresSafeArea(edges: .bottom)
         .tabViewStyle(.page(indexDisplayMode: .never))
     }
 
