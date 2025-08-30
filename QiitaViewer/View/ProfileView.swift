@@ -182,6 +182,7 @@ private struct ProfileContentView: View {
             .padding(.vertical, -4)
             // 見た目の間隔が均等に近づくように調整する
             .padding(.top, 2)
+            .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
             .scrollIndicators(.hidden)
         }
         .padding(16)
