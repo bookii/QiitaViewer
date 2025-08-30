@@ -44,20 +44,14 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
     }
 
     private let domain = "https://qiita.com"
-    private let headers: HTTPHeaders
 
-    public init() {
-        guard let accessToken = Bundle.main.object(forInfoDictionaryKey: "ACCESS_TOKEN") as? String else {
-            fatalError("ACCESS_TOKEN not found in Info.plist")
-        }
-        headers = ["Authorization": "Bearer \(accessToken)"]
-    }
+    public init() {}
 
     public func fetchUser(userId: String) async throws -> User {
         guard let escapedUserId = userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) else {
             throw Error.userIdEscapeFailed
         }
-        let response = await AF.request("\(domain)/api/v2/users/\(escapedUserId)", headers: headers)
+        let response = await AF.request("\(domain)/api/v2/users/\(escapedUserId)")
             .validate()
             .serializingDecodable(User.self)
             .response
@@ -74,7 +68,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
         guard let escapedUserId = userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) else {
             throw Error.userIdEscapeFailed
         }
-        let response = await AF.request("\(domain)/api/v2/users/\(escapedUserId)/items", headers: headers)
+        let response = await AF.request("\(domain)/api/v2/users/\(escapedUserId)/items")
             .validate()
             .serializingDecodable([Item].self)
             .response
@@ -91,7 +85,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
         guard let escapedUserId = userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) else {
             throw Error.userIdEscapeFailed
         }
-        let response = await AF.request("\(domain)/api/v2/users/\(escapedUserId)/followees", headers: headers)
+        let response = await AF.request("\(domain)/api/v2/users/\(escapedUserId)/followees")
             .validate()
             .serializingDecodable([User].self)
             .response
@@ -108,7 +102,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
         guard let escapedUserId = userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) else {
             throw Error.userIdEscapeFailed
         }
-        let response = await AF.request("\(domain)/api/v2/users/\(escapedUserId)/followers", headers: headers)
+        let response = await AF.request("\(domain)/api/v2/users/\(escapedUserId)/followers")
             .validate()
             .serializingDecodable([User].self)
             .response
