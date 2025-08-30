@@ -145,6 +145,7 @@ private struct FollowContentView: View {
             }
             .tag(FollowType.follower)
         }
+        .ignoresSafeArea(edges: .bottom)
         .tabViewStyle(.page(indexDisplayMode: .never))
     }
 
