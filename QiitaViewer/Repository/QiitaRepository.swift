@@ -32,7 +32,7 @@ public protocol QiitaRepositoryProtocol {
 public final class QiitaRepository: QiitaRepositoryProtocol {
     public enum Error: LocalizedError {
         case userIdEscapeFailed
-        
+
         public var errorDescription: String? {
             switch self {
             case .userIdEscapeFailed:
@@ -40,6 +40,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
             }
         }
     }
+
     private let domain = "https://qiita.com"
     private let headers: HTTPHeaders
 

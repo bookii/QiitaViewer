@@ -23,6 +23,10 @@ public struct ProfileView: View {
 }
 
 private struct ProfileContentView: View {
+    private enum Destination: Hashable {
+        case item(URL)
+    }
+
     @StateObject private var viewModel: ProfileViewModel
     @Binding private var path: NavigationPath
     private let user: User
@@ -70,6 +74,12 @@ private struct ProfileContentView: View {
         .refreshable {
             await loadItems()
         }
+        .navigationDestination(for: Destination.self) { destination in
+            switch destination {
+            case let .item(url):
+                SafariView(url: url)
+            }
+        }
     }
 
     private var headerView: some View {
@@ -88,6 +98,7 @@ private struct ProfileContentView: View {
             if let description = user.description {
                 Text(description)
                     .font(.body)
+                    .multilineTextAlignment(.leading)
             }
             HStack(spacing: 16) {
                 HStack(spacing: 6) {
@@ -129,7 +140,7 @@ private struct ProfileContentView: View {
                             Divider()
                         }
                         VStack(spacing: 0) {
-                            itemView(item: viewModel.items[index])
+                            itemButton(item: viewModel.items[index])
                         }
                     }
                 }
@@ -139,54 +150,61 @@ private struct ProfileContentView: View {
         .padding(16)
     }
 
-    private func itemView(item: Item) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            if let createdAt = item.createdAt {
-                Text(dateFormatter.string(from: createdAt))
-                    .font(.caption)
-                    .foregroundStyle(Color(uiColor: .secondaryLabel))
-            }
-            HStack(spacing: 0) {
-                Text(item.title)
-                    .font(.headline)
-                Spacer(minLength: 0)
-            }
-            HStack(spacing: 0) {
-                HStack(spacing: 4) {
-                    Image(systemName: "heart")
-                        .resizable()
-                        .scaledToFit()
+    private func itemButton(item: Item) -> some View {
+        Button {
+            path.append(Destination.item(item.url))
+        } label: {
+            VStack(alignment: .leading, spacing: 8) {
+                if let createdAt = item.createdAt {
+                    Text(dateFormatter.string(from: createdAt))
+                        .font(.caption)
                         .foregroundStyle(Color(uiColor: .secondaryLabel))
-                        .frame(width: 12, height: 12)
-                    Text(String(item.likesCount))
-                        .font(.subheadline)
                 }
-                Spacer(minLength: 8)
-            }
-            ScrollView(.horizontal) {
-                HStack(spacing: 8) {
-                    ForEach(item.tags, id: \.name) { tag in
-                        Text(tag.name)
-                            .font(.caption)
+                HStack(spacing: 0) {
+                    Text(item.title)
+                        .font(.headline)
+                        .foregroundStyle(Color(uiColor: .label))
+                        .multilineTextAlignment(.leading)
+                    Spacer(minLength: 0)
+                }
+                HStack(spacing: 0) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "heart")
+                            .resizable()
+                            .scaledToFit()
                             .foregroundStyle(Color(uiColor: .secondaryLabel))
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 4)
-                            .background(in: RoundedRectangle(cornerRadius: 4))
-                            .backgroundStyle(Color(uiColor: .tertiarySystemGroupedBackground))
+                            .frame(width: 12, height: 12)
+                        Text(String(item.likesCount))
+                            .font(.subheadline)
+                            .foregroundStyle(Color(uiColor: .label))
                     }
+                    Spacer(minLength: 8)
                 }
-                // hitTest を少し広げておく
-                .padding(.vertical, 4)
+                ScrollView(.horizontal) {
+                    HStack(spacing: 8) {
+                        ForEach(item.tags, id: \.name) { tag in
+                            Text(tag.name)
+                                .font(.caption)
+                                .foregroundStyle(Color(uiColor: .secondaryLabel))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 4)
+                                .background(in: RoundedRectangle(cornerRadius: 4))
+                                .backgroundStyle(Color(uiColor: .tertiarySystemGroupedBackground))
+                        }
+                    }
+                    // hitTest を少し広げておく
+                    .padding(.vertical, 4)
+                }
+                // hitTest を広げた分を戻しておく
+                .padding(.vertical, -4)
+                // 見た目の間隔が均等に近づくように調整する
+                .padding(.top, 2)
+                .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
+                .scrollIndicators(.hidden)
             }
-            // hitTest を広げた分を戻しておく
-            .padding(.vertical, -4)
-            // 見た目の間隔が均等に近づくように調整する
-            .padding(.top, 2)
-            .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
-            .scrollIndicators(.hidden)
+            .padding(16)
+            .background(Color(uiColor: .secondarySystemGroupedBackground))
         }
-        .padding(16)
-        .background(Color(uiColor: .secondarySystemGroupedBackground))
     }
 
     private func loadItems() async {
