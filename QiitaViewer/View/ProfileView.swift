@@ -32,7 +32,6 @@ private struct ProfileContentView: View {
     private let user: User
     @State private var isAlertPresented: Bool = false
     @State private var alertMessage: String?
-    @State private var isSheetPresented: Bool = false
     @State private var selectedFollowType: FollowView.FollowType?
     @State private var isInitialLoading: Bool = true
     private let dateFormatter: DateFormatter = {
@@ -114,7 +113,6 @@ private struct ProfileContentView: View {
             HStack(spacing: 16) {
                 Button {
                     selectedFollowType = .followee
-                    isSheetPresented = true
                 } label: {
                     HStack(spacing: 6) {
                         Text(String(user.followeesCount))
@@ -127,7 +125,6 @@ private struct ProfileContentView: View {
                 }
                 Button {
                     selectedFollowType = .follower
-                    isSheetPresented = true
                 } label: {
                     HStack(spacing: 6) {
                         Text(String(user.followersCount))
