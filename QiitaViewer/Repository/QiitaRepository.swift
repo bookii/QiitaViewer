@@ -86,7 +86,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
             throw error
         }
     }
-    
+
     public func fetchFollowees(userId: String) async throws -> [User] {
         guard let escapedUserId = userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) else {
             throw Error.userIdEscapeFailed
@@ -95,7 +95,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
             .validate()
             .serializingDecodable([User].self)
             .response
-        
+
         switch response.result {
         case let .success(users):
             return users
@@ -103,7 +103,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
             throw error
         }
     }
-    
+
     public func fetchFollowers(userId: String) async throws -> [User] {
         guard let escapedUserId = userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) else {
             throw Error.userIdEscapeFailed
@@ -112,7 +112,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
             .validate()
             .serializingDecodable([User].self)
             .response
-        
+
         switch response.result {
         case let .success(users):
             return users
@@ -138,13 +138,13 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
             try? await Task.sleep(for: .seconds(1))
             return Item.mockItems
         }
-        
-        public func fetchFollowees(userId: String) async throws -> [User] {
+
+        public func fetchFollowees(userId _: String) async throws -> [User] {
             try? await Task.sleep(for: .seconds(1))
             return User.mockUsers
         }
-        
-        public func fetchFollowers(userId: String) async throws -> [User] {
+
+        public func fetchFollowers(userId _: String) async throws -> [User] {
             try? await Task.sleep(for: .seconds(1))
             return User.mockUsers
         }
