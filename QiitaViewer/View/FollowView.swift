@@ -90,6 +90,12 @@ private struct FollowContentView: View {
                     }
                 }
             }
+            .navigationDestination(for: Destination.self) { destination in
+                switch destination {
+                case let .user(user):
+                    ProfileView(path: $path, user: user)
+                }
+            }
         }
     }
 
@@ -161,39 +167,44 @@ private struct FollowContentView: View {
     }
 
     private func userView(_ user: User) -> some View {
-        HStack(spacing: 0) {
-            AsyncImage(url: user.profileImageUrl) { imagePhase in
-                imagePhase.image?.resizable()
-            }
-            .scaledToFit()
-            .frame(width: 56, height: 56)
-            .clipShape(Circle())
-            Spacer().frame(width: 12)
-            VStack(alignment: .leading, spacing: 8) {
-                Text("@\(user.id)")
-                    .font(.headline)
-                HStack(spacing: 16) {
-                    HStack(spacing: 6) {
-                        Text(String(user.followeesCount))
-                            .font(.headline)
-                        Text("フォロー")
-                            .font(.subheadline)
-                            .foregroundStyle(Color(uiColor: .secondaryLabel))
-                    }
-                    HStack(spacing: 6) {
-                        Text(String(user.followersCount))
-                            .font(.headline)
-                        Text("フォロワー")
-                            .font(.subheadline)
-                            .foregroundStyle(Color(uiColor: .secondaryLabel))
+        Button {
+            path.append(Destination.user(user))
+        } label: {
+            HStack(spacing: 0) {
+                AsyncImage(url: user.profileImageUrl) { imagePhase in
+                    imagePhase.image?.resizable()
+                }
+                .scaledToFit()
+                .frame(width: 56, height: 56)
+                .clipShape(Circle())
+                Spacer().frame(width: 12)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("@\(user.id)")
+                        .font(.headline)
+                    HStack(spacing: 16) {
+                        HStack(spacing: 6) {
+                            Text(String(user.followeesCount))
+                                .font(.headline)
+                            Text("フォロー")
+                                .font(.subheadline)
+                                .foregroundStyle(Color(uiColor: .secondaryLabel))
+                        }
+                        HStack(spacing: 6) {
+                            Text(String(user.followersCount))
+                                .font(.headline)
+                            Text("フォロワー")
+                                .font(.subheadline)
+                                .foregroundStyle(Color(uiColor: .secondaryLabel))
+                        }
                     }
                 }
+                .foregroundStyle(Color(uiColor: .label))
+                Spacer(minLength: 0)
             }
-            Spacer(minLength: 0)
+            // ProfileView に合わせておく
+            .offset(x: -1)
+            .padding(16)
         }
-        // ProfileView に合わせておく
-        .offset(x: -1)
-        .padding(16)
     }
 }
 
