@@ -95,12 +95,14 @@ private struct ProfileContentView: View {
                         .font(.headline)
                     Text("フォロー")
                         .font(.subheadline)
+                        .foregroundStyle(Color(uiColor: .secondaryLabel))
                 }
                 HStack(spacing: 6) {
                     Text(String(user.followersCount))
                         .font(.headline)
                     Text("フォロワー")
                         .font(.subheadline)
+                        .foregroundStyle(Color(uiColor: .secondaryLabel))
                 }
             }
         }
@@ -138,26 +140,49 @@ private struct ProfileContentView: View {
     }
 
     private func itemView(item: Item) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {
+            if let createdAt = item.createdAt {
+                Text(dateFormatter.string(from: createdAt))
+                    .font(.caption)
+                    .foregroundStyle(Color(uiColor: .secondaryLabel))
+            }
             HStack(spacing: 0) {
                 Text(item.title)
                     .font(.headline)
                 Spacer(minLength: 0)
             }
             HStack(spacing: 0) {
-                HStack(spacing: 6) {
+                HStack(spacing: 4) {
+                    Image(systemName: "heart")
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundStyle(Color(uiColor: .secondaryLabel))
+                        .frame(width: 12, height: 12)
                     Text(String(item.likesCount))
-                        .font(.headline)
-                    Text("LGTM")
                         .font(.subheadline)
                 }
                 Spacer(minLength: 8)
-                if let createdAt = item.createdAt {
-                    Text(dateFormatter.string(from: createdAt))
-                        .font(.footnote)
-                        .foregroundStyle(Color(uiColor: .secondaryLabel))
-                }
             }
+            ScrollView(.horizontal) {
+                HStack(spacing: 8) {
+                    ForEach(item.tags, id: \.name) { tag in
+                        Text(tag.name)
+                            .font(.caption)
+                            .foregroundStyle(Color(uiColor: .secondaryLabel))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 4)
+                            .background(in: RoundedRectangle(cornerRadius: 4))
+                            .backgroundStyle(Color(uiColor: .tertiarySystemGroupedBackground))
+                    }
+                }
+                // hitTest を少し広げておく
+                .padding(.vertical, 4)
+            }
+            // hitTest を広げた分を戻しておく
+            .padding(.vertical, -4)
+            // 見た目の間隔が均等に近づくように調整する
+            .padding(.top, 2)
+            .scrollIndicators(.hidden)
         }
         .padding(16)
         .background(Color(uiColor: .secondarySystemGroupedBackground))
