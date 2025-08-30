@@ -61,7 +61,7 @@ private struct FollowContentView: View {
                 Color(uiColor: .systemGroupedBackground)
                     .ignoresSafeArea(edges: .bottom)
             }
-            .navigationTitle("@\(userId)")
+            .navigationTitle("@\(userId) のフォロー / フォロワー")
             .navigationBarTitleDisplayMode(.inline)
             .alert("Error", isPresented: $isAlertPresented) {
                 Button("OK") {
