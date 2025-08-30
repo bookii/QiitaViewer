@@ -62,7 +62,11 @@ private struct ProfileContentView: View {
         .background(Color(uiColor: .systemGroupedBackground))
         .navigationTitle("プロフィール")
         .navigationBarTitleDisplayMode(.inline)
-        .alert("Error", isPresented: $isAlertPresented) {} message: {
+        .alert("Error", isPresented: $isAlertPresented) {
+            Button("OK") {
+                alertMessage = nil
+            }
+        } message: {
             Text(alertMessage ?? "")
         }
         .onAppear {
@@ -89,12 +93,14 @@ private struct ProfileContentView: View {
                     imagePhase.image?.resizable()
                 }
                 .scaledToFit()
-                .frame(width: 64, height: 64)
+                .frame(width: 56, height: 56)
                 .clipShape(Circle())
                 Text("@\(user.id)")
                     .font(.headline)
                 Spacer()
             }
+            // 見た目が左揃えになるように調整する
+            .offset(x: -1)
             if let description = user.description {
                 Text(description)
                     .font(.body)
