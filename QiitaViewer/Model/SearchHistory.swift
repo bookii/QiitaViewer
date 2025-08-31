@@ -12,12 +12,12 @@ public struct SearchHistory: Codable, Equatable {
 }
 
 #if DEBUG
-public extension SearchHistory {
-    static var mockSearchHistories: [SearchHistory] {
-        [
-            .init(userId: "Qiita"),
-            .init(userId: "rana_kualu"),
-        ]
+    public extension SearchHistory {
+        static var mockSearchHistories: [SearchHistory] {
+            [
+                .init(userId: "Qiita"),
+                .init(userId: "rana_kualu"),
+            ]
+        }
     }
-}
 #endif
