@@ -48,6 +48,7 @@ private struct FollowContentView: View {
     private var selectedFollowType: FollowType {
         followTypes[selectedFollowTypeIndex]
     }
+
     @State private var isAlertPresented: Bool = false
     @State private var alertMessage: String?
 
