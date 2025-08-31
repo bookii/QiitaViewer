@@ -71,18 +71,18 @@ https://github.com/user-attachments/assets/4365e901-b539-44bb-8f6b-5fb981d0c59e
 
 https://github.com/user-attachments/assets/467216e1-e21e-44cb-894c-c880173c885e
 
-## VoiceOver 機能について
+### VoiceOver 機能について
 
 本アプリでは、画面読み上げ機能である VoiceOver でユーザーが操作しやすいように、読み上げ文言の設定やコンポーネントのチャンク化などの対応を行っています。
 
-### 検索画面
+#### 検索画面
 
 https://github.com/user-attachments/assets/38241e23-3f32-403e-acd2-11e8ee03625d
 
-### プロフィール画面
+#### プロフィール画面
 
 https://github.com/user-attachments/assets/8c0f7e33-9d72-46c6-b4a7-2431ae685436
 
-### フォロー/フォロワー画面
+#### フォロー/フォロワー画面
 
 https://github.com/user-attachments/assets/07c1c366-a3d1-4279-8100-cbe7da958fc9
