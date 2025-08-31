@@ -7,6 +7,17 @@
 
 import Foundation
 
-public struct SearchHistory: Codable {
+public struct SearchHistory: Codable, Equatable {
     public let userId: String
 }
+
+#if DEBUG
+public extension SearchHistory {
+    static var mockSearchHistories: [SearchHistory] {
+        [
+            .init(userId: "Qiita"),
+            .init(userId: "rana_kualu"),
+        ]
+    }
+}
+#endif
