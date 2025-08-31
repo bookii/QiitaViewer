@@ -30,8 +30,8 @@ public class SearchViewModel: ObservableObject {
     }
 
     @MainActor
-    public func deleteSearchHistory(_ history: SearchHistory) throws {
-        try userDefaultsRepository.deleteSearchHistory(history)
+    public func deleteSearchHistory(userId: String) throws {
+        try userDefaultsRepository.deleteSearchHistory(userId: userId)
         try loadSearchHistories()
     }
 

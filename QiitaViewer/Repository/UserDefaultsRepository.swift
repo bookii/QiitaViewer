@@ -15,7 +15,7 @@ extension EnvironmentValues {
 public protocol UserDefaultsRepositoryProtocol {
     func loadSearchHistories() throws -> [SearchHistory]
     func saveSearchHistory(_ history: SearchHistory) throws
-    func deleteSearchHistory(_ history: SearchHistory) throws
+    func deleteSearchHistory(userId: String) throws
 }
 
 public final class UserDefaultsRepository: UserDefaultsRepositoryProtocol {
@@ -41,11 +41,11 @@ public final class UserDefaultsRepository: UserDefaultsRepositoryProtocol {
         try saveCachedSearchHistories()
     }
 
-    public func deleteSearchHistory(_ history: SearchHistory) throws {
+    public func deleteSearchHistory(userId: String) throws {
         if cachedSearchHistories == nil {
             try cacheSearchHistories()
         }
-        cachedSearchHistories!.removeAll(where: { $0 == history })
+        cachedSearchHistories!.removeAll(where: { $0.userId == userId })
         try saveCachedSearchHistories()
     }
 
@@ -77,8 +77,8 @@ public final class UserDefaultsRepository: UserDefaultsRepositoryProtocol {
             searchHistories.insert(history, at: 0)
         }
 
-        public func deleteSearchHistory(_ history: SearchHistory) {
-            searchHistories.removeAll(where: { $0 == history })
+        public func deleteSearchHistory(userId: String) {
+            searchHistories.removeAll(where: { $0.userId == userId })
         }
     }
 #endif

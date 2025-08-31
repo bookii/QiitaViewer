@@ -73,23 +73,15 @@ private struct SearchContentView: View {
                                     .padding(16)
                                 Spacer()
                             }
-                            Button {
-                                do {
-                                    try viewModel.deleteSearchHistory(history)
-                                } catch {
-                                    alertMessage = error.localizedDescription
-                                    isAlertPresented = true
-                                }
-                            } label: {
-                                Image(systemName: "xmark")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .foregroundStyle(Color(uiColor: .secondaryLabel))
-                                    .frame(width: 12, height: 12)
-                                    .padding(16)
-                            }
+                            .accessibilityHint("ダブルタップしてユーザーを検索します")
+                            deleteHistoryButton(userId: history.userId)
+                                .accessibilityHidden(true)
                         }
                         .background(Color(uiColor: .secondarySystemGroupedBackground))
+                        .accessibilityElement(children: .combine)
+                        .accessibilityActions {
+                            deleteHistoryButton(userId: history.userId)
+                        }
                     }
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -128,6 +120,36 @@ private struct SearchContentView: View {
             case let .result(user):
                 ProfileView(path: $path, user: user)
             }
+        }
+    }
+
+    private func searchFromHistoryButton(userId: String) -> some View {
+        Button {
+            search(userId: userId)
+        } label: {
+            Text(userId)
+                .foregroundStyle(Color(uiColor: .label))
+                .padding(16)
+            Spacer()
+        }
+    }
+
+    private func deleteHistoryButton(userId: String) -> some View {
+        Button {
+            do {
+                try viewModel.deleteSearchHistory(userId: userId)
+            } catch {
+                alertMessage = error.localizedDescription
+                isAlertPresented = true
+            }
+        } label: {
+            Image(systemName: "xmark")
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(Color(uiColor: .secondaryLabel))
+                .frame(width: 12, height: 12)
+                .padding(16)
+                .accessibilityLabel("検索履歴の削除")
         }
     }
 
