@@ -1,4 +1,4 @@
 .DS_Store
 
-BuildTools/.build
-BuildTools/.swiftpm
+QiitaViewer.app
+QiitaViewerTests.xctest

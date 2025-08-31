@@ -22,8 +22,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		6D931D0A2E5F2A340037BA96 /* QiitaViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QiitaViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		6D931EE02E63E9FD0037BA96 /* QiitaViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QiitaViewerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D931D0A2E5F2A340037BA96 /* QiitaViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = QiitaViewer.app; path = "/Users/bookii/Documents/Repos/QiitaViewer/build/Debug-iphoneos/QiitaViewer.app"; sourceTree = "<absolute>"; };
+		6D931EE02E63E9FD0037BA96 /* QiitaViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = QiitaViewerTests.xctest; path = "/Users/bookii/Documents/Repos/QiitaViewer/build/Debug-iphoneos/QiitaViewer.app/PlugIns/QiitaViewerTests.xctest"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -75,9 +75,7 @@
 		6D931C792E5DE1750037BA96 = {
 			isa = PBXGroup;
 			children = (
-				6D931D0A2E5F2A340037BA96 /* QiitaViewer.app */,
 				6D931D822E5F369B0037BA96 /* QiitaViewer */,
-				6D931EE02E63E9FD0037BA96 /* QiitaViewerTests.xctest */,
 				6D931EE12E63E9FD0037BA96 /* QiitaViewerTests */,
 			);
 			sourceTree = "<group>";
