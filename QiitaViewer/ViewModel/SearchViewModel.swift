@@ -19,8 +19,20 @@ public class SearchViewModel: ObservableObject {
     }
 
     @MainActor
-    public func loadSearchHistories() {
-        searchHistories = userDefaultsRepository.loadSearchHistories()
+    public func loadSearchHistories() throws {
+        searchHistories = try userDefaultsRepository.loadSearchHistories()
+    }
+
+    @MainActor
+    public func saveSearchHistory(_ history: SearchHistory) throws {
+        try userDefaultsRepository.saveSearchHistory(history)
+        try loadSearchHistories()
+    }
+
+    @MainActor
+    public func deleteSearchHistory(_ history: SearchHistory) throws {
+        try userDefaultsRepository.deleteSearchHistory(history)
+        try loadSearchHistories()
     }
 
     public func search(userId: String) async throws -> User {
