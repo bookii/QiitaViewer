@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct FollowView: View {
-    public enum FollowType: Int, Identifiable {
+    public enum FollowType: Int, CaseIterable, Identifiable {
         case followee
         case follower
 
@@ -43,14 +43,19 @@ private struct FollowContentView: View {
     @StateObject private var viewModel: FollowViewModel
     @Binding private var path: NavigationPath
     private let userId: String
-    @State private var selectedFollowType: FollowType
+    private let followTypes = FollowType.allCases
+    @State private var selectedFollowTypeIndex: Int
+    private var selectedFollowType: FollowType {
+        followTypes[selectedFollowTypeIndex]
+    }
+
     @State private var isAlertPresented: Bool = false
     @State private var alertMessage: String?
 
     fileprivate init(path: Binding<NavigationPath>, userId: String, followType: FollowType, viewModel: FollowViewModel) {
         _path = path
         self.userId = userId
-        selectedFollowType = followType
+        selectedFollowTypeIndex = followTypes.firstIndex(of: followType) ?? 0
         _viewModel = .init(wrappedValue: viewModel)
     }
 
@@ -102,18 +107,18 @@ private struct FollowContentView: View {
 
     private var tabView: some View {
         HStack(spacing: 0) {
-            ForEach([FollowType.followee, FollowType.follower], id: \.self) { followType in
+            ForEach(followTypes.indices, id: \.self) { index in
                 Button {
-                    selectedFollowType = followType
+                    selectedFollowTypeIndex = index
                 } label: {
                     VStack(spacing: 0) {
-                        Text(followType.title)
+                        Text(followTypes[index].title)
                             .font(.headline)
-                            .foregroundStyle(Color(uiColor: followType == selectedFollowType ? .qiitaPrimary : .secondaryLabel))
+                            .foregroundStyle(Color(uiColor: index == selectedFollowTypeIndex ? .qiitaPrimary : .secondaryLabel))
                             .padding(.vertical, 8)
                         Capsule()
                             .frame(height: 2)
-                            .foregroundStyle(Color(uiColor: followType == selectedFollowType ? .qiitaPrimary : .clear))
+                            .foregroundStyle(Color(uiColor: index == selectedFollowTypeIndex ? .qiitaPrimary : .clear))
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -123,10 +128,24 @@ private struct FollowContentView: View {
         .background {
             Color(uiColor: .systemBackground)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("フォロー, フォロワーの切り替え")
+        .accessibilityValue(selectedFollowType.title)
+        .accessibilityAdjustableAction { direction in
+            switch direction {
+            case .increment:
+                selectedFollowTypeIndex = min(selectedFollowTypeIndex + 1, followTypes.count - 1)
+            case .decrement:
+                selectedFollowTypeIndex = max(selectedFollowTypeIndex - 1, 0)
+            @unknown default:
+                // NOP
+                break
+            }
+        }
     }
 
     private var pageView: some View {
-        TabView(selection: $selectedFollowType) {
+        TabView(selection: $selectedFollowTypeIndex) {
             Group {
                 if let followees = viewModel.followees {
                     usersView(followees)
@@ -135,7 +154,7 @@ private struct FollowContentView: View {
                         .padding(.vertical, 24)
                 }
             }
-            .tag(FollowType.followee)
+            .tag(followTypes.firstIndex(of: .followee)!)
             Group {
                 if let followers = viewModel.followers {
                     usersView(followers)
@@ -144,7 +163,7 @@ private struct FollowContentView: View {
                         .padding(.vertical, 24)
                 }
             }
-            .tag(FollowType.follower)
+            .tag(followTypes.firstIndex(of: .follower)!)
         }
         .ignoresSafeArea(edges: .bottom)
         .tabViewStyle(.page(indexDisplayMode: .never))
@@ -208,6 +227,7 @@ private struct FollowContentView: View {
             .offset(x: -1)
             .padding(16)
         }
+        .accessibilityHint("ダブルタップでプロフィールを表示します")
     }
 }
 

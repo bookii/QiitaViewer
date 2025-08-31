@@ -27,7 +27,7 @@ struct SearchViewModelTests {
         try await searchViewModel.saveSearchHistory(testUser)
         #expect(searchViewModel.searchHistories.contains(testUser))
 
-        try await searchViewModel.deleteSearchHistory(testUser)
+        try await searchViewModel.deleteSearchHistory(userId: testUser.userId)
         #expect(!searchViewModel.searchHistories.contains(testUser))
     }
 
