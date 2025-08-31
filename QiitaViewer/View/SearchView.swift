@@ -122,7 +122,7 @@ private struct SearchContentView: View {
             }
         }
     }
-    
+
     private func searchFromHistoryButton(userId: String) -> some View {
         Button {
             search(userId: userId)
@@ -133,7 +133,7 @@ private struct SearchContentView: View {
             Spacer()
         }
     }
-    
+
     private func deleteHistoryButton(userId: String) -> some View {
         Button {
             do {
