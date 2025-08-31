@@ -70,3 +70,19 @@ https://github.com/user-attachments/assets/64b8bdfe-231f-411a-9c3e-4b84cd79472e
 Swift Package Manager 経由で [nicklockwood/SwiftFormat](nicklockwood/SwiftFormat) を import しているため、プロジェクトを右クリック > `SwiftFormatPlugin` の選択でコードのフォーマットが可能です。
 
 https://github.com/user-attachments/assets/0f13f0b7-78c0-4773-87ed-17ae7df7f755
+
+## VoiceOver 機能について
+
+本アプリでは、画面読み上げ機能である VoiceOver でユーザーが操作しやすいように、読み上げ文言の設定やコンポーネントのチャンク化などの対応を行っています。
+
+### 検索画面
+
+https://github.com/user-attachments/assets/38241e23-3f32-403e-acd2-11e8ee03625d
+
+### プロフィール画面
+
+https://github.com/user-attachments/assets/8c0f7e33-9d72-46c6-b4a7-2431ae685436
+
+### フォロー/フォロワー画面
+
+https://github.com/user-attachments/assets/07c1c366-a3d1-4279-8100-cbe7da958fc9
