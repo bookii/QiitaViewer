@@ -36,7 +36,7 @@ public final class UserDefaultsRepository: UserDefaultsRepositoryProtocol {
         if cachedSearchHistories == nil {
             try cacheSearchHistories()
         }
-        cachedSearchHistories!.removeAll(where: { $0.userId == history.userId })
+        cachedSearchHistories!.removeAll(where: { $0 == history })
         cachedSearchHistories!.insert(history, at: 0)
         try saveCachedSearchHistories()
     }
@@ -45,7 +45,7 @@ public final class UserDefaultsRepository: UserDefaultsRepositoryProtocol {
         if cachedSearchHistories == nil {
             try cacheSearchHistories()
         }
-        cachedSearchHistories!.removeAll(where: { $0.userId == history.userId })
+        cachedSearchHistories!.removeAll(where: { $0 == history })
         try saveCachedSearchHistories()
     }
 
@@ -65,10 +65,7 @@ public final class UserDefaultsRepository: UserDefaultsRepositoryProtocol {
 
 #if DEBUG
     public final class MockUserDefaultsRepository: UserDefaultsRepositoryProtocol {
-        private var searchHistories: [SearchHistory] = [
-            .init(userId: "Qiita"),
-            .init(userId: "rana_kualu"),
-        ]
+        private var searchHistories: [SearchHistory] = SearchHistory.mockSearchHistories
 
         public init() {}
 
@@ -81,7 +78,7 @@ public final class UserDefaultsRepository: UserDefaultsRepositoryProtocol {
         }
 
         public func deleteSearchHistory(_ history: SearchHistory) {
-            searchHistories.removeAll(where: { $0.userId == history.userId })
+            searchHistories.removeAll(where: { $0 == history })
         }
     }
 #endif
