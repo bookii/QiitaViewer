@@ -73,7 +73,7 @@ private struct SearchContentView: View {
                                     .padding(16)
                                 Spacer()
                             }
-                            .accessibilityHint("ダブルタップでユーザーを検索します")
+                            .accessibilityHint("ダブルタップしてユーザーを検索します")
                             deleteHistoryButton(userId: history.userId)
                                 .accessibilityHidden(true)
                         }
@@ -149,8 +149,8 @@ private struct SearchContentView: View {
                 .foregroundStyle(Color(uiColor: .secondaryLabel))
                 .frame(width: 12, height: 12)
                 .padding(16)
+                .accessibilityLabel("検索履歴の削除")
         }
-        .accessibilityLabel("検索履歴の削除")
     }
 
     private func search(userId: String) {

@@ -42,6 +42,14 @@ private struct ProfileContentView: View {
         return formatter
     }()
 
+    private let voiceOverDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.dateStyle = .long
+        formatter.timeStyle = .medium
+        return formatter
+    }()
+
     fileprivate init(path: Binding<NavigationPath>, user: User, viewModel: ProfileViewModel) {
         _path = path
         self.user = user
@@ -125,6 +133,7 @@ private struct ProfileContentView: View {
                             .foregroundStyle(Color(uiColor: .secondaryLabel))
                     }
                 }
+                .accessibilityHint("ダブルタップしてフォロー一覧を表示します")
                 Button {
                     selectedFollowType = .follower
                 } label: {
@@ -137,6 +146,7 @@ private struct ProfileContentView: View {
                             .foregroundStyle(Color(uiColor: .secondaryLabel))
                     }
                 }
+                .accessibilityHint("ダブルタップしてフォロワー一覧を表示します")
             }
         }
         .padding(16)
@@ -181,6 +191,7 @@ private struct ProfileContentView: View {
                     Text(dateFormatter.string(from: createdAt))
                         .font(.caption)
                         .foregroundStyle(Color(uiColor: .secondaryLabel))
+                        .accessibilityLabel(voiceOverDateFormatter.string(from: createdAt))
                 }
                 HStack(spacing: 0) {
                     Text(item.title)
@@ -200,6 +211,8 @@ private struct ProfileContentView: View {
                             .font(.subheadline)
                             .foregroundStyle(Color(uiColor: .label))
                     }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("\(item.likesCount)いいね")
                     Spacer(minLength: 8)
                 }
                 ScrollView(.horizontal) {
@@ -217,6 +230,7 @@ private struct ProfileContentView: View {
                     // hitTest を少し広げておく
                     .padding(.vertical, 4)
                 }
+                .accessibilityLabel("タグ, \(item.tags.map(\.name).joined(separator: ", "))")
                 // hitTest を広げた分を戻しておく
                 .padding(.vertical, -4)
                 // 見た目の間隔が均等に近づくように調整する
@@ -227,6 +241,7 @@ private struct ProfileContentView: View {
             .padding(16)
             .background(Color(uiColor: .secondarySystemGroupedBackground))
         }
+        .accessibilityHint("ダブルタップして投稿を表示します")
     }
 
     private func loadItems() async {
