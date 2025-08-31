@@ -18,16 +18,18 @@ public struct FollowView: View {
     }
 
     @Environment(\.qiitaRepository) private var qiitaRepository
+    @Binding private var path: NavigationPath
     private let userId: String
     private let followType: FollowType
 
-    public init(userId: String, followType: FollowType) {
+    public init(path: Binding<NavigationPath>, userId: String, followType: FollowType) {
+        _path = path
         self.userId = userId
         self.followType = followType
     }
 
     public var body: some View {
-        FollowContentView(userId: userId, followType: followType, viewModel: .init(userId: userId, qiitaRepository: qiitaRepository))
+        FollowContentView(path: $path, userId: userId, followType: followType, viewModel: .init(userId: userId, qiitaRepository: qiitaRepository))
     }
 }
 
@@ -39,62 +41,61 @@ private struct FollowContentView: View {
     }
 
     @StateObject private var viewModel: FollowViewModel
-    @State private var path = NavigationPath()
+    @Binding private var path: NavigationPath
     private let userId: String
     @State private var selectedFollowType: FollowType
     @State private var isAlertPresented: Bool = false
     @State private var alertMessage: String?
 
-    fileprivate init(userId: String, followType: FollowType, viewModel: FollowViewModel) {
+    fileprivate init(path: Binding<NavigationPath>, userId: String, followType: FollowType, viewModel: FollowViewModel) {
+        _path = path
         self.userId = userId
         selectedFollowType = followType
         _viewModel = .init(wrappedValue: viewModel)
     }
 
     fileprivate var body: some View {
-        NavigationStack(path: $path) {
-            VStack(spacing: 0) {
-                tabView
-                pageView
+        VStack(spacing: 0) {
+            tabView
+            pageView
+        }
+        .background {
+            Color(uiColor: .systemGroupedBackground)
+                .ignoresSafeArea(edges: .bottom)
+        }
+        .navigationTitle("@\(userId) のフォロー / フォロワー")
+        .navigationBarTitleDisplayMode(.inline)
+        .alert("Error", isPresented: $isAlertPresented) {
+            Button("OK") {
+                alertMessage = nil
             }
-            .background {
-                Color(uiColor: .systemGroupedBackground)
-                    .ignoresSafeArea(edges: .bottom)
-            }
-            .navigationTitle("@\(userId) のフォロー / フォロワー")
-            .navigationBarTitleDisplayMode(.inline)
-            .alert("Error", isPresented: $isAlertPresented) {
-                Button("OK") {
-                    alertMessage = nil
-                }
-            } message: {
-                Text(alertMessage ?? "")
-            }
-            .animation(.default, value: selectedFollowType)
-            .onChange(of: selectedFollowType, initial: true) { _, newValue in
-                Task {
-                    do {
-                        switch newValue {
-                        case .followee:
-                            if viewModel.followees == nil {
-                                try await viewModel.loadFollowees()
-                            }
-                        case .follower:
-                            if viewModel.followers == nil {
-                                try await viewModel.loadFollowers()
-                            }
+        } message: {
+            Text(alertMessage ?? "")
+        }
+        .animation(.default, value: selectedFollowType)
+        .onChange(of: selectedFollowType, initial: true) { _, newValue in
+            Task {
+                do {
+                    switch newValue {
+                    case .followee:
+                        if viewModel.followees == nil {
+                            try await viewModel.loadFollowees()
                         }
-                    } catch {
-                        alertMessage = error.localizedDescription
-                        isAlertPresented = true
+                    case .follower:
+                        if viewModel.followers == nil {
+                            try await viewModel.loadFollowers()
+                        }
                     }
+                } catch {
+                    alertMessage = error.localizedDescription
+                    isAlertPresented = true
                 }
             }
-            .navigationDestination(for: Destination.self) { destination in
-                switch destination {
-                case let .user(user):
-                    ProfileView(path: $path, user: user)
-                }
+        }
+        .navigationDestination(for: Destination.self) { destination in
+            switch destination {
+            case let .user(user):
+                ProfileView(path: $path, user: user)
             }
         }
     }
@@ -223,7 +224,9 @@ private extension FollowView.FollowType {
 
 #if DEBUG
     #Preview {
-        FollowView(userId: User.mockUsers[0].id, followType: .followee)
-            .environment(\.qiitaRepository, MockQiitaRepository())
+        NavigationView { path in
+            FollowView(path: path, userId: User.mockUsers[0].id, followType: .followee)
+                .environment(\.qiitaRepository, MockQiitaRepository())
+        }
     }
 #endif
