@@ -22,8 +22,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		6D931D0A2E5F2A340037BA96 /* QiitaViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = QiitaViewer.app; path = "/Users/bookii/Documents/Repos/QiitaViewer/build/Debug-iphoneos/QiitaViewer.app"; sourceTree = "<absolute>"; };
-		6D931EE02E63E9FD0037BA96 /* QiitaViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = QiitaViewerTests.xctest; path = "/Users/bookii/Documents/Repos/QiitaViewer/build/Debug-iphoneos/QiitaViewer.app/PlugIns/QiitaViewerTests.xctest"; sourceTree = "<absolute>"; };
+		6D93215E2E646EC20037BA96 /* QiitaViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QiitaViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D93215F2E646EC20037BA96 /* QiitaViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QiitaViewerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -77,6 +77,8 @@
 			children = (
 				6D931D822E5F369B0037BA96 /* QiitaViewer */,
 				6D931EE12E63E9FD0037BA96 /* QiitaViewerTests */,
+				6D93215E2E646EC20037BA96 /* QiitaViewer.app */,
+				6D93215F2E646EC20037BA96 /* QiitaViewerTests.xctest */,
 			);
 			sourceTree = "<group>";
 		};
@@ -104,7 +106,7 @@
 				6D931CD12E5F1EE50037BA96 /* SwiftFormat */,
 			);
 			productName = QiitaViewer;
-			productReference = 6D931D0A2E5F2A340037BA96 /* QiitaViewer.app */;
+			productReference = 6D93215E2E646EC20037BA96 /* QiitaViewer.app */;
 			productType = "com.apple.product-type.application";
 		};
 		6D931EDF2E63E9FD0037BA96 /* QiitaViewerTests */ = {
@@ -127,7 +129,7 @@
 			packageProductDependencies = (
 			);
 			productName = QiitaViewerTests;
-			productReference = 6D931EE02E63E9FD0037BA96 /* QiitaViewerTests.xctest */;
+			productReference = 6D93215F2E646EC20037BA96 /* QiitaViewerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -150,11 +152,12 @@
 				};
 			};
 			buildConfigurationList = 6D931C7D2E5DE1750037BA96 /* Build configuration list for PBXProject "QiitaViewer" */;
-			developmentRegion = en;
+			developmentRegion = ja;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				ja,
 			);
 			mainGroup = 6D931C792E5DE1750037BA96;
 			minimizedProjectReferenceProxies = 1;
@@ -342,6 +345,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SVKRAN4W6B;
@@ -360,6 +364,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mizznoff.QiitaViewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -371,6 +376,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SVKRAN4W6B;
@@ -389,6 +395,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mizznoff.QiitaViewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
