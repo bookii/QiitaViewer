@@ -134,7 +134,7 @@ private struct FollowContentView: View {
         .accessibilityAdjustableAction { direction in
             switch direction {
             case .increment:
-                selectedFollowTypeIndex = min(selectedFollowTypeIndex + 1, followTypes.count)
+                selectedFollowTypeIndex = min(selectedFollowTypeIndex + 1, followTypes.count - 1)
             case .decrement:
                 selectedFollowTypeIndex = max(selectedFollowTypeIndex - 1, 0)
             @unknown default:
