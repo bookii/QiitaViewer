@@ -37,9 +37,9 @@ struct SearchViewModelTests {
         #expect(true)
     }
     
-    @Test func searchHistoriesCannotSearchUnexistingUser() async throws {
+    @Test func searchHistoriesCannotSearchNonExistentUser() async throws {
         async #expect(throws: Error.self) {
-            try await searchViewModel.search(userId: "UnexistingUser")
+            try await searchViewModel.search(userId: "NonExistentUser")
         }
     }
 }
