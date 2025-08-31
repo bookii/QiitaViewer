@@ -60,17 +60,34 @@ private struct SearchContentView: View {
                     .padding(8)
                 LazyVStack(alignment: .leading, spacing: 0) {
                     ForEach(viewModel.searchHistories.indices, id: \.self) { index in
-                        let searchHistory = viewModel.searchHistories[index]
+                        let history = viewModel.searchHistories[index]
                         if index > 0 {
                             Divider()
                         }
-                        Button {
-                            search(userId: searchHistory.userId)
-                        } label: {
-                            Text(searchHistory.userId)
-                                .foregroundStyle(Color(uiColor: .label))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(16)
+                        HStack(spacing: 0) {
+                            Button {
+                                search(userId: history.userId)
+                            } label: {
+                                Text(history.userId)
+                                    .foregroundStyle(Color(uiColor: .label))
+                                    .padding(16)
+                                Spacer()
+                            }
+                            Button {
+                                do {
+                                    try viewModel.deleteSearchHistory(history)
+                                } catch {
+                                    alertMessage = error.localizedDescription
+                                    isAlertPresented = true
+                                }
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .foregroundStyle(Color(uiColor: .secondaryLabel))
+                                    .frame(width: 12, height: 12)
+                                    .padding(16)
+                            }
                         }
                         .background(Color(uiColor: .secondarySystemGroupedBackground))
                     }
@@ -99,7 +116,12 @@ private struct SearchContentView: View {
             Text(alertMessage ?? "")
         }
         .onAppear {
-            viewModel.loadSearchHistories()
+            do {
+                try viewModel.loadSearchHistories()
+            } catch {
+                alertMessage = error.localizedDescription
+                isAlertPresented = true
+            }
         }
         .navigationDestination(for: Destination.self) { destination in
             switch destination {
@@ -118,6 +140,10 @@ private struct SearchContentView: View {
             do {
                 let user = try await viewModel.search(userId: userId)
                 path.append(Destination.result(user))
+                // 画面遷移が完了してから保存と searchBar のクリアを行う
+                try? await Task.sleep(for: .seconds(1))
+                try viewModel.saveSearchHistory(.init(userId: user.id))
+                searchText = ""
             } catch {
                 alertMessage = error.localizedDescription
                 isAlertPresented = true
