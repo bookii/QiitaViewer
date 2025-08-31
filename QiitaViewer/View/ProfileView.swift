@@ -86,7 +86,9 @@ private struct ProfileContentView: View {
             }
         }
         .sheet(item: $selectedFollowType) { selectedFollowType in
-            FollowView(userId: user.id, followType: selectedFollowType)
+            NavigationView { path in
+                FollowView(path: path, userId: user.id, followType: selectedFollowType)
+            }
         }
     }
 
@@ -239,10 +241,8 @@ private struct ProfileContentView: View {
 
 #if DEBUG
     #Preview {
-        @Previewable @State var path = NavigationPath()
-
-        NavigationStack(path: $path) {
-            ProfileView(path: $path, user: User.mockUsers[0])
+        NavigationView { path in
+            ProfileView(path: path, user: User.mockUsers[0])
         }
         .environment(\.qiitaRepository, MockQiitaRepository())
     }

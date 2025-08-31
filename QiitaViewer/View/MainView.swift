@@ -8,7 +8,6 @@
 import SwiftUI
 
 public struct MainView: View {
-    @State private var path = NavigationPath()
     private let userDefaultsRepository: UserDefaultsRepositoryProtocol
     private let qiitaRepository: QiitaRepositoryProtocol
 
@@ -20,8 +19,8 @@ public struct MainView: View {
     }
 
     public var body: some View {
-        NavigationStack(path: $path) {
-            SearchView(path: $path)
+        NavigationView { path in
+            SearchView(path: path)
         }
         .environment(\.userDefaultsRepository, userDefaultsRepository)
         .environment(\.qiitaRepository, qiitaRepository)

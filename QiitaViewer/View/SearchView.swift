@@ -155,10 +155,8 @@ private struct SearchContentView: View {
 
 #if DEBUG
     #Preview {
-        @Previewable @State var path = NavigationPath()
-
-        NavigationStack(path: $path) {
-            SearchView(path: $path)
+        NavigationView { path in
+            SearchView(path: path)
         }
         .environment(\.userDefaultsRepository, MockUserDefaultsRepository())
         .environment(\.qiitaRepository, MockQiitaRepository())

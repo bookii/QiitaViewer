@@ -71,7 +71,7 @@ private struct SafariContentView: UIViewControllerRepresentable {
 #if DEBUG
 
     #Preview {
-        NavigationStack {
+        NavigationView { _ in
             SafariView(url: Item.mockItems[0].url)
         }
     }
