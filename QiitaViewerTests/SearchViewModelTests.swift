@@ -1,0 +1,45 @@
+//
+//  SearchViewModelTests.swift
+//  QiitaViewerTests
+//
+//  Created by Tsubasa YABUKI on 2025/08/31.
+//
+
+import Testing
+@testable import QiitaViewer
+
+struct SearchViewModelTests {
+    let searchViewModel = SearchViewModel(
+        userDefaultsRepository: MockUserDefaultsRepository(),
+        qiitaRepository: MockQiitaRepository()
+    )
+
+    @Test func searchHistoriesIsInitiallyEmpty() async throws {
+        #expect(searchViewModel.searchHistories.isEmpty)
+    }
+    
+    @Test func searchHistoriesCanBeLoadedSavedAndDeleted() async throws {
+        try await searchViewModel.loadSearchHistories()
+        #expect(searchViewModel.searchHistories == SearchHistory.mockSearchHistories)
+
+        let testUser = SearchHistory(userId: "TestUser")
+
+        try await searchViewModel.saveSearchHistory(testUser)
+        #expect(searchViewModel.searchHistories.contains(testUser))
+        
+        try await searchViewModel.deleteSearchHistory(testUser)
+        #expect(!searchViewModel.searchHistories.contains(testUser))
+    }
+    
+    @Test func searchHistoriesCanSearchExistingUser() async throws {
+        let existingUserId = SearchHistory.mockSearchHistories.first!.userId
+        _ = try await searchViewModel.search(userId: existingUserId)
+        #expect(true)
+    }
+    
+    @Test func searchHistoriesCannotSearchNonExistentUser() async throws {
+        async #expect(throws: Error.self) {
+            try await searchViewModel.search(userId: "NonExistentUser")
+        }
+    }
+}
