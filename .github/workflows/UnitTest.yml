@@ -14,9 +14,6 @@ jobs:
             - name: Setup Swift
               uses: swift-actions/setup-swift@v2
 
-            - name: Check swift version
-              run: swift --version
-
             - name: Run Tests
               run: swift test
               working-directory: ./BuildTools
