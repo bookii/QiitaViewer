@@ -15,8 +15,15 @@ struct ProfileViewModelTests {
         #expect(profileViewModel.items.isEmpty)
     }
 
-    @Test func itemsCanBeLoaded() async throws {
-        try await profileViewModel.loadItems()
-        #expect(profileViewModel.items.map(\.id) == Item.mockItems.map(\.id))
+    @Test func itemsCanBeReloadedAndLoadedMore() async throws {
+        try await profileViewModel.reloadItems()
+        #expect(profileViewModel.items.count == Item.mockItems.count)
+
+        try await profileViewModel.loadMoreItems()
+        try await profileViewModel.loadMoreItems()
+        #expect(profileViewModel.items.count == Item.mockItems.count * 3)
+
+        try await profileViewModel.reloadItems()
+        #expect(profileViewModel.items.count == Item.mockItems.count)
     }
 }

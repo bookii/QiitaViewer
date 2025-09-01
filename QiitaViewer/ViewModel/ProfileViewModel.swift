@@ -9,6 +9,7 @@ import Foundation
 
 public class ProfileViewModel: ObservableObject {
     @Published public private(set) var items: [Item] = []
+    private var page: Int?
 
     private let userId: String
     private let qiitaRepository: QiitaRepositoryProtocol
@@ -19,7 +20,14 @@ public class ProfileViewModel: ObservableObject {
     }
 
     @MainActor
-    public func loadItems() async throws {
-        items = try await qiitaRepository.fetchItems(userId: userId)
+    public func reloadItems() async throws {
+        (items, page) = try await qiitaRepository.fetchItems(userId: userId, page: nil)
+    }
+
+    @MainActor
+    public func loadMoreItems() async throws {
+        let (newItems, newPage) = try await qiitaRepository.fetchItems(userId: userId, page: page)
+        items.append(contentsOf: newItems)
+        page = newPage
     }
 }
