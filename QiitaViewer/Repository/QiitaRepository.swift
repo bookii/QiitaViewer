@@ -47,6 +47,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
 
     public init() {}
 
+    /// - seealso: https://qiita.com/api/v2/docs#get-apiv2usersuser_id
     public func fetchUser(userId: String) async throws -> User {
         guard let escapedUserId = userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) else {
             throw Error.userIdEscapeFailed
@@ -64,6 +65,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
         }
     }
 
+    /// - seealso: https://qiita.com/api/v2/docs#get-apiv2usersuser_iditems
     public func fetchItems(userId: String, page: Int?) async throws -> (items: [Item], page: Int) {
         guard let escapedUserId = userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) else {
             throw Error.userIdEscapeFailed
@@ -82,6 +84,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
         }
     }
 
+    /// - seealso: https://qiita.com/api/v2/docs#get-apiv2usersuser_idfollowees
     public func fetchFollowees(userId: String) async throws -> [User] {
         guard let escapedUserId = userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) else {
             throw Error.userIdEscapeFailed
@@ -99,6 +102,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
         }
     }
 
+    /// - seealso: https://qiita.com/api/v2/docs#get-apiv2usersuser_idfollowers
     public func fetchFollowers(userId: String) async throws -> [User] {
         guard let escapedUserId = userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) else {
             throw Error.userIdEscapeFailed
