@@ -88,11 +88,12 @@ private struct ProfileContentView: View {
         }
         .refreshable {
             loadingTask?.cancel()
-            loadingTask = Task {
+            let task = Task {
                 await reloadItems()
                 loadingTask = nil
             }
-            await loadingTask!.value
+            loadingTask = task
+            await task.value
         }
         .navigationDestination(for: Destination.self) { destination in
             switch destination {
