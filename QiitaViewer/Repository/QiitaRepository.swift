@@ -26,9 +26,9 @@ public enum QiitaRepositoryError: LocalizedError {
 
 public protocol QiitaRepositoryProtocol {
     func fetchUser(userId: String) async throws -> User
-    func fetchItems(userId: String, page: Int?) async throws -> (items: [Item], page: Int)
-    func fetchFollowees(userId: String) async throws -> [User]
-    func fetchFollowers(userId: String) async throws -> [User]
+    func fetchItems(userId: String, page: Int?) async throws -> (items: [Item], nextPage: Int)
+    func fetchFollowees(userId: String, page: Int?) async throws -> (users: [User], nextPage: Int)
+    func fetchFollowers(userId: String, page: Int?) async throws -> (users: [User], nextPage: Int)
 }
 
 public final class QiitaRepository: QiitaRepositoryProtocol {
@@ -66,7 +66,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
     }
 
     /// - seealso: https://qiita.com/api/v2/docs#get-apiv2usersuser_iditems
-    public func fetchItems(userId: String, page: Int?) async throws -> (items: [Item], page: Int) {
+    public func fetchItems(userId: String, page: Int?) async throws -> (items: [Item], nextPage: Int) {
         guard let escapedUserId = userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) else {
             throw Error.userIdEscapeFailed
         }
@@ -85,36 +85,38 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
     }
 
     /// - seealso: https://qiita.com/api/v2/docs#get-apiv2usersuser_idfollowees
-    public func fetchFollowees(userId: String) async throws -> [User] {
+    public func fetchFollowees(userId: String, page: Int?) async throws -> (users: [User], nextPage: Int) {
         guard let escapedUserId = userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) else {
             throw Error.userIdEscapeFailed
         }
-        let response = await AF.request("\(domain)/api/v2/users/\(escapedUserId)/followees")
+        let page = page ?? 1
+        let response = await AF.request("\(domain)/api/v2/users/\(escapedUserId)/followees?page=\(page)")
             .validate()
             .serializingDecodable([User].self)
             .response
 
         switch response.result {
         case let .success(users):
-            return users
+            return (users, page + 1)
         case let .failure(error):
             throw error
         }
     }
 
     /// - seealso: https://qiita.com/api/v2/docs#get-apiv2usersuser_idfollowers
-    public func fetchFollowers(userId: String) async throws -> [User] {
+    public func fetchFollowers(userId: String, page: Int?) async throws -> (users: [User], nextPage: Int) {
         guard let escapedUserId = userId.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) else {
             throw Error.userIdEscapeFailed
         }
-        let response = await AF.request("\(domain)/api/v2/users/\(escapedUserId)/followers")
+        let page = page ?? 1
+        let response = await AF.request("\(domain)/api/v2/users/\(escapedUserId)/followers?page=\(page)")
             .validate()
             .serializingDecodable([User].self)
             .response
 
         switch response.result {
         case let .success(users):
-            return users
+            return (users, page + 1)
         case let .failure(error):
             throw error
         }
@@ -133,19 +135,19 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
             return user
         }
 
-        public func fetchItems(userId _: String, page: Int?) async throws -> (items: [Item], page: Int) {
+        public func fetchItems(userId _: String, page: Int?) async throws -> (items: [Item], nextPage: Int) {
             try? await Task.sleep(for: .seconds(1))
-            return (Item.mockItems, (page ?? 0) + 1)
+            return (Item.mockItems, (page ?? 1) + 1)
         }
 
-        public func fetchFollowees(userId _: String) async throws -> [User] {
+        public func fetchFollowees(userId _: String, page: Int?) async throws -> (users: [User], nextPage: Int) {
             try? await Task.sleep(for: .seconds(1))
-            return User.mockUsers
+            return (User.mockUsers, (page ?? 1) + 1)
         }
 
-        public func fetchFollowers(userId _: String) async throws -> [User] {
+        public func fetchFollowers(userId _: String, page: Int?) async throws -> (users: [User], nextPage: Int) {
             try? await Task.sleep(for: .seconds(1))
-            return User.mockUsers
+            return (User.mockUsers, (page ?? 1) + 1)
         }
     }
 #endif
