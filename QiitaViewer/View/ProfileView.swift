@@ -33,7 +33,8 @@ private struct ProfileContentView: View {
     @State private var isAlertPresented: Bool = false
     @State private var alertMessage: String?
     @State private var selectedFollowType: FollowView.FollowType?
-    @State private var isInitialLoading: Bool = true
+    @State private var isInitiallyLoading: Bool = true
+    @State private var loadingTask: Task<Void, Never>?
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ja_JP")
@@ -60,7 +61,7 @@ private struct ProfileContentView: View {
         ScrollView {
             VStack(spacing: 0) {
                 headerView
-                if isInitialLoading {
+                if isInitiallyLoading {
                     initialLoadingView
                 } else {
                     itemsView
@@ -79,13 +80,19 @@ private struct ProfileContentView: View {
             Text(alertMessage ?? "")
         }
         .onAppear {
-            Task {
-                await loadItems()
-                isInitialLoading = false
+            loadingTask = Task {
+                await reloadItems()
+                loadingTask = nil
+                isInitiallyLoading = false
             }
         }
         .refreshable {
-            await loadItems()
+            loadingTask?.cancel()
+            loadingTask = Task {
+                await reloadItems()
+                loadingTask = nil
+            }
+            await loadingTask!.value
         }
         .navigationDestination(for: Destination.self) { destination in
             switch destination {
@@ -174,6 +181,20 @@ private struct ProfileContentView: View {
                         VStack(spacing: 0) {
                             itemButton(item: viewModel.items[index])
                         }
+                        .onAppear {
+                            guard index == viewModel.items.count - 1, loadingTask == nil else {
+                                return
+                            }
+                            loadingTask = Task {
+                                do {
+                                    try await viewModel.loadMoreItems()
+                                } catch {
+                                    alertMessage = error.localizedDescription
+                                    isAlertPresented = true
+                                }
+                                loadingTask = nil
+                            }
+                        }
                     }
                 }
             }
@@ -244,9 +265,9 @@ private struct ProfileContentView: View {
         .accessibilityHint("ダブルタップして投稿を表示します")
     }
 
-    private func loadItems() async {
+    private func reloadItems() async {
         do {
-            try await viewModel.loadItems()
+            try await viewModel.reloadItems()
         } catch {
             alertMessage = error.localizedDescription
             isAlertPresented = true
