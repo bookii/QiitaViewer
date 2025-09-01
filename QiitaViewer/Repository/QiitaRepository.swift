@@ -135,7 +135,7 @@ public final class QiitaRepository: QiitaRepositoryProtocol {
 
         public func fetchItems(userId _: String, page: Int?) async throws -> (items: [Item], page: Int) {
             try? await Task.sleep(for: .seconds(1))
-            return (Item.mockItems, page ?? 0 + 1)
+            return (Item.mockItems, (page ?? 0) + 1)
         }
 
         public func fetchFollowees(userId _: String) async throws -> [User] {
