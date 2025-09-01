@@ -11,18 +11,32 @@ import Testing
 struct FollowViewModelTests {
     let followViewModel = FollowViewModel(userId: "Qiita", qiitaRepository: MockQiitaRepository())
 
-    @Test func followeesAndFollowersAreInitiallyNil() {
-        #expect(followViewModel.followees == nil)
-        #expect(followViewModel.followers == nil)
+    @Test func followeesAndFollowersAreInitiallyEmpty() {
+        #expect(followViewModel.followees.isEmpty)
+        #expect(followViewModel.followers.isEmpty)
     }
 
-    @Test func followeesCanBeLoaded() async throws {
-        try await followViewModel.loadFollowees()
-        #expect(followViewModel.followees != nil)
+    @Test func followeesCanBeReloadedAndLoadedMore() async throws {
+        try await followViewModel.reloadFollowees()
+        #expect(followViewModel.followees.count == User.mockUsers.count)
+
+        try await followViewModel.loadMoreFollowees()
+        try await followViewModel.loadMoreFollowees()
+        #expect(followViewModel.followees.count == User.mockUsers.count * 3)
+
+        try await followViewModel.reloadFollowees()
+        #expect(followViewModel.followees.count == User.mockUsers.count)
     }
 
-    @Test func followersCanBeLoaded() async throws {
-        try await followViewModel.loadFollowers()
-        #expect(followViewModel.followers != nil)
+    @Test func followersCanBeReloadedAndLoadedMore() async throws {
+        try await followViewModel.reloadFollowers()
+        #expect(followViewModel.followers.count == User.mockUsers.count)
+
+        try await followViewModel.loadMoreFollowers()
+        try await followViewModel.loadMoreFollowers()
+        #expect(followViewModel.followers.count == User.mockUsers.count * 3)
+
+        try await followViewModel.reloadFollowers()
+        #expect(followViewModel.followers.count == User.mockUsers.count)
     }
 }

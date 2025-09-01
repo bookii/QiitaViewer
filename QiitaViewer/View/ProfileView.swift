@@ -190,8 +190,7 @@ private struct ProfileContentView: View {
                                 do {
                                     try await viewModel.loadMoreItems()
                                 } catch {
-                                    alertMessage = error.localizedDescription
-                                    isAlertPresented = true
+                                    presentErrorAlert(error: error)
                                 }
                                 loadingTask = nil
                             }
@@ -270,9 +269,13 @@ private struct ProfileContentView: View {
         do {
             try await viewModel.reloadItems()
         } catch {
-            alertMessage = error.localizedDescription
-            isAlertPresented = true
+            presentErrorAlert(error: error)
         }
+    }
+
+    private func presentErrorAlert(error: Error) {
+        alertMessage = error.localizedDescription
+        isAlertPresented = true
     }
 }
 

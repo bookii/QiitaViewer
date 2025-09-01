@@ -49,6 +49,10 @@ private struct FollowContentView: View {
         followTypes[selectedFollowTypeIndex]
     }
 
+    @State private var isFolloweesInitiallyLoaded: Bool = false
+    @State private var isFollowersInitiallyLoaded: Bool = false
+    @State private var loadingFolloweesTask: Task<Void, Never>?
+    @State private var loadingFollowersTask: Task<Void, Never>?
     @State private var isAlertPresented: Bool = false
     @State private var alertMessage: String?
 
@@ -79,22 +83,61 @@ private struct FollowContentView: View {
         }
         .animation(.default, value: selectedFollowType)
         .onChange(of: selectedFollowType, initial: true) { _, newValue in
-            Task {
-                do {
-                    switch newValue {
-                    case .followee:
-                        if viewModel.followees == nil {
-                            try await viewModel.loadFollowees()
-                        }
-                    case .follower:
-                        if viewModel.followers == nil {
-                            try await viewModel.loadFollowers()
-                        }
-                    }
-                } catch {
-                    alertMessage = error.localizedDescription
-                    isAlertPresented = true
+            switch newValue {
+            case .followee:
+                guard !isFolloweesInitiallyLoaded else {
+                    return
                 }
+                loadingFolloweesTask = Task {
+                    do {
+                        try await viewModel.reloadFollowees()
+                    } catch {
+                        presentErrorAlert(error: error)
+                    }
+                    loadingFolloweesTask = nil
+                    isFolloweesInitiallyLoaded = true
+                }
+            case .follower:
+                guard !isFollowersInitiallyLoaded else {
+                    return
+                }
+                loadingFollowersTask = Task {
+                    do {
+                        try await viewModel.reloadFollowers()
+                    } catch {
+                        presentErrorAlert(error: error)
+                    }
+                    loadingFollowersTask = nil
+                    isFollowersInitiallyLoaded = true
+                }
+            }
+        }
+        .refreshable {
+            switch selectedFollowType {
+            case .followee:
+                loadingFolloweesTask?.cancel()
+                let task = Task {
+                    do {
+                        try await viewModel.reloadFollowees()
+                    } catch {
+                        presentErrorAlert(error: error)
+                    }
+                    loadingFolloweesTask = nil
+                }
+                loadingFolloweesTask = task
+                await task.value
+            case .follower:
+                loadingFollowersTask?.cancel()
+                let task = Task {
+                    do {
+                        try await viewModel.reloadFollowers()
+                    } catch {
+                        presentErrorAlert(error: error)
+                    }
+                    loadingFollowersTask = nil
+                }
+                loadingFollowersTask = task
+                await task.value
             }
         }
         .navigationDestination(for: Destination.self) { destination in
@@ -147,8 +190,8 @@ private struct FollowContentView: View {
     private var pageView: some View {
         TabView(selection: $selectedFollowTypeIndex) {
             Group {
-                if let followees = viewModel.followees {
-                    usersView(followees)
+                if isFolloweesInitiallyLoaded {
+                    usersView(viewModel.followees)
                 } else {
                     ProgressView()
                         .padding(.vertical, 24)
@@ -156,8 +199,8 @@ private struct FollowContentView: View {
             }
             .tag(followTypes.firstIndex(of: .followee)!)
             Group {
-                if let followers = viewModel.followers {
-                    usersView(followers)
+                if isFollowersInitiallyLoaded {
+                    usersView(viewModel.followers)
                 } else {
                     ProgressView()
                         .padding(.vertical, 24)
@@ -178,6 +221,34 @@ private struct FollowContentView: View {
                         Divider()
                     }
                     userView(user)
+                        .onAppear {
+                            switch selectedFollowType {
+                            case .followee:
+                                guard index == users.count - 1, loadingFolloweesTask == nil else {
+                                    return
+                                }
+                                loadingFolloweesTask = Task {
+                                    do {
+                                        try await viewModel.loadMoreFollowees()
+                                    } catch {
+                                        presentErrorAlert(error: error)
+                                    }
+                                    loadingFolloweesTask = nil
+                                }
+                            case .follower:
+                                guard index == users.count - 1, loadingFollowersTask == nil else {
+                                    return
+                                }
+                                loadingFollowersTask = Task {
+                                    do {
+                                        try await viewModel.loadMoreFollowers()
+                                    } catch {
+                                        presentErrorAlert(error: error)
+                                    }
+                                    loadingFollowersTask = nil
+                                }
+                            }
+                        }
                 }
             }
             .background {
@@ -229,6 +300,11 @@ private struct FollowContentView: View {
         }
         .accessibilityHint("ダブルタップでプロフィールを表示します")
     }
+
+    private func presentErrorAlert(error: Error) {
+        alertMessage = error.localizedDescription
+        isAlertPresented = true
+    }
 }
 
 private extension FollowView.FollowType {
@@ -246,7 +322,7 @@ private extension FollowView.FollowType {
     #Preview {
         NavigationView { path in
             FollowView(path: path, userId: User.mockUsers[0].id, followType: .followee)
-                .environment(\.qiitaRepository, MockQiitaRepository())
         }
+        .environment(\.qiitaRepository, MockQiitaRepository())
     }
 #endif
