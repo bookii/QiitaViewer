@@ -8,6 +8,10 @@
 import SwiftUI
 
 public struct ProfileView: View {
+    fileprivate enum Destination: Hashable {
+        case item(URL)
+    }
+
     @Environment(\.qiitaRepository) private var qiitaRepository
     @Binding private var path: NavigationPath
     private let user: User
@@ -19,14 +23,16 @@ public struct ProfileView: View {
 
     public var body: some View {
         ProfileContentView(path: $path, user: user, viewModel: ProfileViewModel(userId: user.id, qiitaRepository: qiitaRepository))
+            .navigationDestination(for: Destination.self) { destination in
+                switch destination {
+                case let .item(url):
+                    SafariView(url: url)
+                }
+            }
     }
 }
 
 private struct ProfileContentView: View {
-    private enum Destination: Hashable {
-        case item(URL)
-    }
-
     @StateObject private var viewModel: ProfileViewModel
     @Binding private var path: NavigationPath
     private let user: User
@@ -94,12 +100,6 @@ private struct ProfileContentView: View {
             }
             loadingTask = task
             await task.value
-        }
-        .navigationDestination(for: Destination.self) { destination in
-            switch destination {
-            case let .item(url):
-                SafariView(url: url)
-            }
         }
         .sheet(item: $selectedFollowType) { selectedFollowType in
             NavigationView { path in
@@ -205,7 +205,7 @@ private struct ProfileContentView: View {
 
     private func itemButton(item: Item) -> some View {
         Button {
-            path.append(Destination.item(item.url))
+            path.append(ProfileView.Destination.item(item.url))
         } label: {
             VStack(alignment: .leading, spacing: 8) {
                 if let createdAt = item.createdAt {
