@@ -9,34 +9,38 @@
 import Testing
 
 struct FollowViewModelTests {
-    let followViewModel = FollowViewModel(userId: "Qiita", qiitaRepository: MockQiitaRepository())
+    let followeeViewModel = FolloweeViewModel(userId: "Qiita", qiitaRepository: MockQiitaRepository())
+    let followerViewModel = FollowerViewModel(userId: "Qiita", qiitaRepository: MockQiitaRepository())
 
-    @Test func followeesAndFollowersAreInitiallyEmpty() {
-        #expect(followViewModel.followees.isEmpty)
-        #expect(followViewModel.followers.isEmpty)
+    @Test func followeesAreInitiallyEmpty() {
+        #expect(followeeViewModel.users.isEmpty)
     }
 
     @Test func followeesCanBeReloadedAndLoadedMore() async throws {
-        try await followViewModel.reloadFollowees()
-        #expect(followViewModel.followees.count == User.mockUsers.count)
+        try await followeeViewModel.reloadUsers()
+        #expect(followeeViewModel.users.count == User.mockUsers.count)
 
-        try await followViewModel.loadMoreFollowees()
-        try await followViewModel.loadMoreFollowees()
-        #expect(followViewModel.followees.count == User.mockUsers.count * 3)
+        try await followeeViewModel.loadMoreUsers()
+        try await followeeViewModel.loadMoreUsers()
+        #expect(followeeViewModel.users.count == User.mockUsers.count * 3)
 
-        try await followViewModel.reloadFollowees()
-        #expect(followViewModel.followees.count == User.mockUsers.count)
+        try await followeeViewModel.reloadUsers()
+        #expect(followeeViewModel.users.count == User.mockUsers.count)
+    }
+
+    @Test func followersAreInitiallyEmpty() {
+        #expect(followerViewModel.users.isEmpty)
     }
 
     @Test func followersCanBeReloadedAndLoadedMore() async throws {
-        try await followViewModel.reloadFollowers()
-        #expect(followViewModel.followers.count == User.mockUsers.count)
+        try await followerViewModel.reloadUsers()
+        #expect(followerViewModel.users.count == User.mockUsers.count)
 
-        try await followViewModel.loadMoreFollowers()
-        try await followViewModel.loadMoreFollowers()
-        #expect(followViewModel.followers.count == User.mockUsers.count * 3)
+        try await followerViewModel.loadMoreUsers()
+        try await followerViewModel.loadMoreUsers()
+        #expect(followerViewModel.users.count == User.mockUsers.count * 3)
 
-        try await followViewModel.reloadFollowers()
-        #expect(followViewModel.followers.count == User.mockUsers.count)
+        try await followerViewModel.reloadUsers()
+        #expect(followerViewModel.users.count == User.mockUsers.count)
     }
 }
