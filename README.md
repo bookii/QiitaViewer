@@ -22,7 +22,7 @@ SwiftUI です。
 ### アーキテクチャ
 
 MVVM アーキテクチャを採用しています。<br />
-各画面の View と ViewModel は一対一て対応しています (例: `SearchView` に対して `SearchViewModel` が存在する) 。
+各画面の View と ViewModel は一対一で対応しています (例: `SearchView` に対して `SearchViewModel` が存在する) 。
 
 Model, View, ViewModel の他に Repository 層が存在していて、各 ViewModel に対して必要な Repository (例: QiitaRepository) を注入する形をとっています。
 
