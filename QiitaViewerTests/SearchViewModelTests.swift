@@ -14,7 +14,7 @@ struct SearchViewModelTests {
         qiitaRepository: MockQiitaRepository()
     )
 
-    @Test func searchHistoriesIsInitiallyEmpty() {
+    @Test func searchHistoriesAreInitiallyEmpty() {
         #expect(searchViewModel.searchHistories.isEmpty)
     }
 

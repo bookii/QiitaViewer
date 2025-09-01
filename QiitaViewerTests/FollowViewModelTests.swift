@@ -9,20 +9,38 @@
 import Testing
 
 struct FollowViewModelTests {
-    let followViewModel = FollowViewModel(userId: "Qiita", qiitaRepository: MockQiitaRepository())
+    let followeeViewModel = FolloweeViewModel(userId: "Qiita", qiitaRepository: MockQiitaRepository())
+    let followerViewModel = FollowerViewModel(userId: "Qiita", qiitaRepository: MockQiitaRepository())
 
-    @Test func followeesAndFollowersAreInitiallyNil() {
-        #expect(followViewModel.followees == nil)
-        #expect(followViewModel.followers == nil)
+    @Test func followeesAreInitiallyEmpty() {
+        #expect(followeeViewModel.users.isEmpty)
     }
 
-    @Test func followeesCanBeLoaded() async throws {
-        try await followViewModel.loadFollowees()
-        #expect(followViewModel.followees != nil)
+    @Test func followeesCanBeReloadedAndLoadedMore() async throws {
+        try await followeeViewModel.reloadUsers()
+        #expect(followeeViewModel.users.count == User.mockUsers.count)
+
+        try await followeeViewModel.loadMoreUsers()
+        try await followeeViewModel.loadMoreUsers()
+        #expect(followeeViewModel.users.count == User.mockUsers.count * 3)
+
+        try await followeeViewModel.reloadUsers()
+        #expect(followeeViewModel.users.count == User.mockUsers.count)
     }
 
-    @Test func followersCanBeLoaded() async throws {
-        try await followViewModel.loadFollowers()
-        #expect(followViewModel.followers != nil)
+    @Test func followersAreInitiallyEmpty() {
+        #expect(followerViewModel.users.isEmpty)
+    }
+
+    @Test func followersCanBeReloadedAndLoadedMore() async throws {
+        try await followerViewModel.reloadUsers()
+        #expect(followerViewModel.users.count == User.mockUsers.count)
+
+        try await followerViewModel.loadMoreUsers()
+        try await followerViewModel.loadMoreUsers()
+        #expect(followerViewModel.users.count == User.mockUsers.count * 3)
+
+        try await followerViewModel.reloadUsers()
+        #expect(followerViewModel.users.count == User.mockUsers.count)
     }
 }

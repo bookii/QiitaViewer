@@ -17,6 +17,10 @@ public struct FollowView: View {
         }
     }
 
+    fileprivate enum Destination: Hashable {
+        case user(User)
+    }
+
     @Environment(\.qiitaRepository) private var qiitaRepository
     @Binding private var path: NavigationPath
     private let userId: String
@@ -29,18 +33,23 @@ public struct FollowView: View {
     }
 
     public var body: some View {
-        FollowContentView(path: $path, userId: userId, followType: followType, viewModel: .init(userId: userId, qiitaRepository: qiitaRepository))
+        FollowContentView(path: $path, userId: userId, followType: followType,
+                          followeeViewModel: FolloweeViewModel(userId: userId, qiitaRepository: qiitaRepository),
+                          followerViewModel: FollowerViewModel(userId: userId, qiitaRepository: qiitaRepository))
+            .navigationDestination(for: Destination.self) { destination in
+                switch destination {
+                case let .user(user):
+                    ProfileView(path: $path, user: user)
+                }
+            }
     }
 }
 
-private struct FollowContentView: View {
+private struct FollowContentView<FolloweeViewModel: FollowViewModel, FollowerViewModel: FollowViewModel>: View {
     fileprivate typealias FollowType = FollowView.FollowType
 
-    private enum Destination: Hashable {
-        case user(User)
-    }
-
-    @StateObject private var viewModel: FollowViewModel
+    @StateObject private var followeeViewModel: FolloweeViewModel
+    @StateObject private var followerViewModel: FollowerViewModel
     @Binding private var path: NavigationPath
     private let userId: String
     private let followTypes = FollowType.allCases
@@ -50,13 +59,14 @@ private struct FollowContentView: View {
     }
 
     @State private var isAlertPresented: Bool = false
-    @State private var alertMessage: String?
+    @State private var alertMessage: String = ""
 
-    fileprivate init(path: Binding<NavigationPath>, userId: String, followType: FollowType, viewModel: FollowViewModel) {
+    fileprivate init(path: Binding<NavigationPath>, userId: String, followType: FollowType, followeeViewModel: FolloweeViewModel, followerViewModel: FollowerViewModel) {
         _path = path
         self.userId = userId
         selectedFollowTypeIndex = followTypes.firstIndex(of: followType) ?? 0
-        _viewModel = .init(wrappedValue: viewModel)
+        _followeeViewModel = .init(wrappedValue: followeeViewModel)
+        _followerViewModel = .init(wrappedValue: followerViewModel)
     }
 
     fileprivate var body: some View {
@@ -72,37 +82,12 @@ private struct FollowContentView: View {
         .navigationBarTitleDisplayMode(.inline)
         .alert("Error", isPresented: $isAlertPresented) {
             Button("OK") {
-                alertMessage = nil
+                alertMessage = ""
             }
         } message: {
-            Text(alertMessage ?? "")
+            Text(alertMessage)
         }
         .animation(.default, value: selectedFollowType)
-        .onChange(of: selectedFollowType, initial: true) { _, newValue in
-            Task {
-                do {
-                    switch newValue {
-                    case .followee:
-                        if viewModel.followees == nil {
-                            try await viewModel.loadFollowees()
-                        }
-                    case .follower:
-                        if viewModel.followers == nil {
-                            try await viewModel.loadFollowers()
-                        }
-                    }
-                } catch {
-                    alertMessage = error.localizedDescription
-                    isAlertPresented = true
-                }
-            }
-        }
-        .navigationDestination(for: Destination.self) { destination in
-            switch destination {
-            case let .user(user):
-                ProfileView(path: $path, user: user)
-            }
-        }
     }
 
     private var tabView: some View {
@@ -146,38 +131,75 @@ private struct FollowContentView: View {
 
     private var pageView: some View {
         TabView(selection: $selectedFollowTypeIndex) {
-            Group {
-                if let followees = viewModel.followees {
-                    usersView(followees)
-                } else {
-                    ProgressView()
-                        .padding(.vertical, 24)
-                }
-            }
-            .tag(followTypes.firstIndex(of: .followee)!)
-            Group {
-                if let followers = viewModel.followers {
-                    usersView(followers)
-                } else {
-                    ProgressView()
-                        .padding(.vertical, 24)
-                }
-            }
-            .tag(followTypes.firstIndex(of: .follower)!)
+            PageContentView(path: $path, isAlertPresented: $isAlertPresented, alertMessage: $alertMessage, viewModel: followeeViewModel)
+                .tag(followTypes.firstIndex(of: .followee)!)
+            PageContentView(path: $path, isAlertPresented: $isAlertPresented, alertMessage: $alertMessage, viewModel: followerViewModel)
+                .tag(followTypes.firstIndex(of: .follower)!)
         }
         .ignoresSafeArea(edges: .bottom)
         .tabViewStyle(.page(indexDisplayMode: .never))
     }
+}
 
-    private func usersView(_ users: [User]) -> some View {
+private struct PageContentView<ViewModel: FollowViewModel>: View {
+    @Binding private var path: NavigationPath
+    @Binding private var isAlertPresented: Bool
+    @Binding private var alertMessage: String
+    @ObservedObject private var viewModel: ViewModel
+    @State private var loadingTask: Task<Void, Never>?
+    @State private var isInitiallyLoaded: Bool = false
+
+    fileprivate init(path: Binding<NavigationPath>, isAlertPresented: Binding<Bool>, alertMessage: Binding<String>, viewModel: ViewModel) {
+        _path = path
+        _isAlertPresented = isAlertPresented
+        _alertMessage = alertMessage
+        self.viewModel = viewModel
+    }
+
+    fileprivate var body: some View {
+        Group {
+            if isInitiallyLoaded {
+                usersView
+            } else {
+                ProgressView()
+                    .padding(.vertical, 24)
+            }
+        }
+        .onAppear {
+            loadingTask = Task {
+                do {
+                    try await viewModel.reloadUsers()
+                } catch {
+                    presentErrorAlert(error: error)
+                }
+                isInitiallyLoaded = true
+                loadingTask = nil
+            }
+        }
+    }
+
+    private var usersView: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
+                let users = viewModel.users
                 ForEach(users.indices, id: \.self) { index in
-                    let user = users[index]
                     if index > 0 {
                         Divider()
                     }
-                    userView(user)
+                    userView(users[index])
+                        .onAppear {
+                            guard index == users.count - 1, loadingTask == nil else {
+                                return
+                            }
+                            loadingTask = Task {
+                                do {
+                                    try await viewModel.loadMoreUsers()
+                                } catch {
+                                    presentErrorAlert(error: error)
+                                }
+                                loadingTask = nil
+                            }
+                        }
                 }
             }
             .background {
@@ -186,11 +208,24 @@ private struct FollowContentView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .padding(16)
         }
+        .refreshable {
+            loadingTask?.cancel()
+            let task = Task {
+                do {
+                    try await viewModel.reloadUsers()
+                } catch {
+                    presentErrorAlert(error: error)
+                }
+                loadingTask = nil
+            }
+            loadingTask = task
+            await task.value
+        }
     }
 
     private func userView(_ user: User) -> some View {
         Button {
-            path.append(Destination.user(user))
+            path.append(FollowView.Destination.user(user))
         } label: {
             HStack(spacing: 0) {
                 AsyncImage(url: user.profileImageUrl) { imagePhase in
@@ -229,6 +264,11 @@ private struct FollowContentView: View {
         }
         .accessibilityHint("ダブルタップでプロフィールを表示します")
     }
+
+    private func presentErrorAlert(error: Error) {
+        alertMessage = error.localizedDescription
+        isAlertPresented = true
+    }
 }
 
 private extension FollowView.FollowType {
@@ -246,7 +286,7 @@ private extension FollowView.FollowType {
     #Preview {
         NavigationView { path in
             FollowView(path: path, userId: User.mockUsers[0].id, followType: .followee)
-                .environment(\.qiitaRepository, MockQiitaRepository())
         }
+        .environment(\.qiitaRepository, MockQiitaRepository())
     }
 #endif

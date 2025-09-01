@@ -8,6 +8,10 @@
 import SwiftUI
 
 public struct SearchView: View {
+    fileprivate enum Destination: Hashable {
+        case result(User)
+    }
+
     @Environment(\.userDefaultsRepository) private var userDefaultsRepository
     @Environment(\.qiitaRepository) private var qiitaRepository
     @Binding private var path: NavigationPath
@@ -18,14 +22,16 @@ public struct SearchView: View {
 
     public var body: some View {
         SearchContentView(path: $path, viewModel: .init(userDefaultsRepository: userDefaultsRepository, qiitaRepository: qiitaRepository))
+            .navigationDestination(for: Destination.self) { destination in
+                switch destination {
+                case let .result(user):
+                    ProfileView(path: $path, user: user)
+                }
+            }
     }
 }
 
 private struct SearchContentView: View {
-    private enum Destination: Hashable {
-        case result(User)
-    }
-
     @StateObject private var viewModel: SearchViewModel
     @Binding private var path: NavigationPath
     @State private var searchText = ""
@@ -115,12 +121,6 @@ private struct SearchContentView: View {
                 isAlertPresented = true
             }
         }
-        .navigationDestination(for: Destination.self) { destination in
-            switch destination {
-            case let .result(user):
-                ProfileView(path: $path, user: user)
-            }
-        }
     }
 
     private func searchFromHistoryButton(userId: String) -> some View {
@@ -161,7 +161,7 @@ private struct SearchContentView: View {
         Task {
             do {
                 let user = try await viewModel.search(userId: userId)
-                path.append(Destination.result(user))
+                path.append(SearchView.Destination.result(user))
                 // 画面遷移が完了してから保存と searchBar のクリアを行う
                 try? await Task.sleep(for: .seconds(1))
                 try viewModel.saveSearchHistory(.init(userId: user.id))

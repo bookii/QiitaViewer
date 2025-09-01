@@ -11,7 +11,7 @@ import Testing
 struct ProfileViewModelTests {
     let profileViewModel = ProfileViewModel(userId: "Qiita", qiitaRepository: MockQiitaRepository())
 
-    @Test func itemsIsInitiallyEmpty() {
+    @Test func itemsAreInitiallyEmpty() {
         #expect(profileViewModel.items.isEmpty)
     }
 
